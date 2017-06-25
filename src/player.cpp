@@ -4,6 +4,7 @@
 #include "area.hpp"
 #include "arrow.hpp"
 #include "boomerang.hpp"
+#include "bomb.hpp"
 
 #define PLAYER_SPEED 10
 
@@ -64,8 +65,8 @@ void Player::update(){
     
     
     
-    if(keysJustDown[K_Y]){
-        
+    if(outOfSomethingFlashTimer > 0){
+        outOfSomethingFlashTimer -= delta;
     }
     
     if(swingCooldownTimer > 0){
@@ -132,16 +133,28 @@ void Player::update(){
                         Arrow* arrow = new Arrow(R(x)+DIR_X(dir), R(y)+DIR_Y(dir), dir);
                         activeArea->entities.push_back(arrow);
                         activeSave->arrowCount--;
+                    }else{
+                        outOfSomethingFlashTimer = OUT_OF_SOMETHING_FLASH_TIMER_MAX;
                     }
                     useTimer = USE_BOW_TIMER_MAX;
                     faceDir = dir;
                     break;
                 }
                 case USE_BOOMERANG:{
-                    if(!activeArea->boomerangOut){
-                        activeArea->boomerangOut = true;
+                    if(!boomerangOut){
+                        boomerangOut = true;
                         Boomerang* boomerang = new Boomerang(R(x)+DIR_X(dir), R(y)+DIR_Y(dir), dir);
                         activeArea->entities.push_back(boomerang);
+                    }
+                    break;
+                }
+                case USE_BOMB:{
+                    if(activeSave->bombCount > 0){
+                        Bomb* bomb = new Bomb(R(x)+DIR_X(dir), R(y)+DIR_Y(dir));
+                        activeArea->entities.push_back(bomb);
+                        activeSave->bombCount--;
+                    }else{
+                        outOfSomethingFlashTimer = OUT_OF_SOMETHING_FLASH_TIMER_MAX;
                     }
                     break;
                 }

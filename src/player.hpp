@@ -11,6 +11,8 @@
 
 #define USE_BOW_TIMER_MAX 0.3
 
+#define OUT_OF_SOMETHING_FLASH_TIMER_MAX 1.0
+
 
 class Player : public Entity, public Living{
 public:
@@ -19,6 +21,7 @@ public:
     float swingTimer = 0;
     float invulnerableTimer = 0;
     float useTimer = 0;
+    float outOfSomethingFlashTimer = 0;
     
     unsigned char faceDir = 0;
     

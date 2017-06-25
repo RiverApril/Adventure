@@ -71,9 +71,9 @@ bool initSDL(){
     return 0;
 }
 
-void putChar(const unsigned char x, const unsigned char y, const unsigned char color, const char c){
-    if(x > consoleW || y > consoleH){
-        debug("off screen: %u, %u\n", x, y);
+void putChar(int x, int y, unsigned char color, char c){
+    if(x < 0 || y < 0 || x >= consoleW || y >= consoleH){
+        debug("off screen: %d, %d\n", x, y);
         return;
     }else if(c < ' '){
         debug("bad char: %d\n", c);
@@ -132,7 +132,7 @@ void refresh(){
         switch(e.type){
             case SDL_QUIT:{
                 running = false;
-                break;
+                return;
             }
         }
     }

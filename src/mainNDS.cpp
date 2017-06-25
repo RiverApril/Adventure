@@ -64,9 +64,9 @@ u16 colorPal[32] = {
     (u16)RGB15(16, 16, 16)
 };
 
-void putChar(const u8 x, const u8 y, const u8 color, const char c){
+void putChar(int x, int y, u8 color, char c){
     if(x > consoleW || y > consoleH){
-        debug("off screen: %u, %u\n", x, y);
+        debug("off screen: %d, %d\n", x, y);
         return;
     }else if(c < ' '){
         debug("bad char: %d\n", c);

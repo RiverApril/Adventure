@@ -50,3 +50,9 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 c:OutsideHome
 a:T1SlimeRoom
 */
+
+void onEnter(char sym){
+    if(sym == 'c'){
+        activeDialog = new Dialog(true, DIALOG_STYLE_BOTTOM, {"The quick brown fox jumpped over the lazy dog. Uninterupted mongeese fail to see the beauty in rainforests.", "This is page two...", "Almost done, just making sure multiple pages work.", "One more", "Okay, last one."});
+    }
+}

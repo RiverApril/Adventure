@@ -41,6 +41,7 @@
 
 #include "areas.hpp"
 #include "player.hpp"
+#include "dialog.hpp"
 
 
 void putStrJustS(const unsigned char x, const unsigned char y, const unsigned char color, const char* s){
@@ -75,6 +76,9 @@ float secondsElapsed = 0;
 
 Area* activeArea;
 Player* activePlayer;
+Dialog* activeDialog;
+
+bool boomerangOut;
 
 bool loadGame(){
 
@@ -114,6 +118,8 @@ bool saveGame(){
 
 bool init(){
     
+    loadGame();
+    
     return true;
 }
 
@@ -121,9 +127,7 @@ void startGame(int i){
     
     activeSave = &allSaves[i];
     
-    if(activeSave->started){
-        loadGame();
-    }else{
+    if(!activeSave->started){
         activeSave->started = true;
         activeSave->hp = 6;
         activeSave->maxHp = 6;
@@ -140,16 +144,17 @@ void startGame(int i){
         activeSave->useUnlocked[USE_BOW] = true;
         activeSave->useUnlocked[USE_BOOMERANG] = true;
         activeSave->useUnlocked[USE_BOMB] = true;
-        activeSave->useSelected = USE_BOW;
+        activeSave->useSelected = USE_NONE;
         activeSave->sword = SWORD_BASIC;
-        activeSave->arrowCount = 30;
+        activeSave->arrowCount = 20;
+        activeSave->bombCount = 20;
     }
     
     activeArea = allAreas[activeSave->areaIndex];
     
     activePlayer = new Player(activeSave->playerX, activeSave->playerY);
     
-    activeArea->enter();
+    activeArea->enter('?');
 }
 
 #define MENU_MAIN_MENU 0
@@ -162,7 +167,7 @@ void startGame(int i){
 int menu = MENU_MAIN_MENU;
 int mainSelected = 0;
 
-void putCharA(const unsigned char x, const unsigned char y, const unsigned char color, const char c){
+void putCharA(int x, int y, unsigned char color, char c){
     putChar(x, y+consoleHH, color, c);
 }
 
@@ -189,6 +194,14 @@ void drawFill(int x, int y, int w, int h, unsigned char color, char c){
     }
 }
 
+void closeDialog(){
+    if(activeDialog){
+        if(activeDialog->shouldBeDeleted){
+            delete activeDialog;
+        }
+        activeDialog = nullptr;
+    }
+}
 
 bool update(float d){
     delta = d;
@@ -199,194 +212,219 @@ bool update(float d){
         keysJustUp[i] = keysLast[i] && !keysNow[i];
     }
     
-    if(menu == MENU_MAIN_MENU){
-        drawFill(0, 0, consoleW, consoleH, C_WHITE, ' ');
-        putStr(2, consoleHH+1, C_WHITE, "A D V E N T U R E");
-        for(int i=0;i<SAVE_COUNT;i++){
-            putStr(4, consoleHH+3+i, C_WHITE, "%c %s Slot %d", mainSelected == i ? '-' : ' ', allSaves[i].started?"Resume":"Begin", i+1);
-        }
-        putStr(2, consoleHH+6+SAVE_COUNT, C_WHITE, "[" STR_K_START "]: play");
-        putStr(2, consoleHH+7+SAVE_COUNT, C_WHITE, "[" STR_K_L "]+[" STR_K_R "]+[" STR_K_START "]: delete");
-        if(keysJustDown[K_START]){
-            if(keysNow[K_L] && keysNow[K_R]){
-                allSaves[mainSelected].started = false;
-            }else if(keysNow[K_X] && keysNow[K_Y]){ // cheat recover code
-                allSaves[mainSelected].started = true;
-            }else{
+    if(activeDialog){
+        activeDialog->update();
+    }else{
+    
+        if(menu == MENU_MAIN_MENU){
+            drawFill(0, 0, consoleW, consoleH, C_WHITE, ' ');
+            putStr(2, consoleHH+1, C_WHITE, "A D V E N T U R E");
+            for(int i=0;i<SAVE_COUNT;i++){
+                putStr(4, consoleHH+3+i, C_WHITE, "%c %s Slot %d", mainSelected == i ? '-' : ' ', allSaves[i].started?"Resume":"Begin", i+1);
+            }
+            putStr(2, consoleHH+6+SAVE_COUNT, C_WHITE, "[" STR_K_START "]: play");
+            putStr(2, consoleHH+7+SAVE_COUNT, C_WHITE, "[" STR_K_L "]+[" STR_K_R "]+[" STR_K_START "]: delete");
+            if(keysJustDown[K_START]){
+                if(keysNow[K_L] && keysNow[K_R]){
+                    allSaves[mainSelected].started = false;
+                }else if(keysNow[K_X] && keysNow[K_Y]){ // cheat recover code
+                    allSaves[mainSelected].started = true;
+                }
+            }
+            if(keysJustDown[K_START] || keysJustDown[K_A]){
                 startGame(mainSelected);
                 menu = MENU_GAME;
             }
-        }
-        if(keysJustDown[K_UP]){
-            mainSelected--;
-            if(mainSelected < 0){
-                mainSelected = SAVE_COUNT-1;
+            if(keysJustDown[K_UP]){
+                mainSelected--;
+                if(mainSelected < 0){
+                    mainSelected = SAVE_COUNT-1;
+                }
             }
-        }
-        if(keysJustDown[K_DOWN]){
-            mainSelected++;
-            if(mainSelected >= SAVE_COUNT){
-                mainSelected = 0;
+            if(keysJustDown[K_DOWN]){
+                mainSelected++;
+                if(mainSelected >= SAVE_COUNT){
+                    mainSelected = 0;
+                }
             }
-        }
-    }else{
-    
-        switch(menu){
-            case MENU_GAME:{
-                if(keysJustDown[K_SELECT]){
-                    menu = MENU_INV;
+        }else{
+        
+            switch(menu){
+                case MENU_GAME:{
+                    if(keysJustDown[K_SELECT]){
+                        menu = MENU_INV;
+                    }
+                    if(keysJustDown[K_START]){
+                        menu = MENU_PAUSE;
+                    }
+                    if(activeSave->hp <= 0){
+                        menu = MENU_GAME_OVER;
+                    }
+                    activeArea->update();
+                    break;
                 }
-                if(keysJustDown[K_START]){
-                    menu = MENU_PAUSE;
-                }
-                if(activeSave->hp <= 0){
-                    menu = MENU_GAME_OVER;
-                }
-                activeArea->update();
-                break;
-            }
-            case MENU_INV:{
-                if(keysJustDown[K_SELECT]){
-                    menu = MENU_GAME;
-                }
-                drawFill(0, consoleHH, consoleW, consoleHH, C_WHITE, ' ');
-                const int invHC = 6;
-                const int invVC = 6;
-                const int invX = 1;
-                const int invY = 2;
-                const int invW = invHC*2+3;
-                const int invH = invVC+2;
-                putStr(consoleW/2-9, consoleHH, C_WHITE, " [" STR_K_SELECT "]: resume ");
-                drawBox(invX, invY+consoleHH, invW, invH);
-                for(int i = 0; i < invHC; i++){
-                    for(int j = 0; j < invVC; j++){
-                        int use = j*invHC+i;
-                        if(use < USE_COUNT && activeSave->useUnlocked[use]){
-                            putCharA(invX+(i*2)+2, invY+j+1, useColor(use), useChar(use));
+                case MENU_INV:{
+                    if(keysJustDown[K_SELECT] || keysJustDown[K_A] || keysJustDown[K_B] || keysJustDown[K_X] || keysJustDown[K_Y]){
+                        menu = MENU_GAME;
+                    }
+                    drawFill(0, consoleHH, consoleW, consoleHH, C_WHITE, ' ');
+                    const int invHC = 6;
+                    const int invVC = 6;
+                    const int invX = 1;
+                    const int invY = 2;
+                    const int invW = invHC*2+3;
+                    const int invH = invVC+2;
+                    putStr(consoleW/2-9, consoleHH, C_WHITE, " [" STR_K_SELECT "]: resume ");
+                    drawBox(invX, invY+consoleHH, invW, invH);
+                    for(int i = 0; i < invHC; i++){
+                        for(int j = 0; j < invVC; j++){
+                            int use = j*invHC+i;
+                            if(use < USE_COUNT && activeSave->useUnlocked[use]){
+                                putCharA(invX+(i*2)+2, invY+j+1, useColor(use), useChar(use));
+                            }
                         }
                     }
-                }
-                if(activeSave->useSelected != USE_NONE){
-                    int i = activeSave->useSelected % invHC;
-                    int j = activeSave->useSelected / invHC;
-                    putCharA(invX+(i*2)+1, invY+j+1, C_WHITE, '[');
-                    putCharA(invX+(i*2)+3, invY+j+1, C_WHITE, ']');
-                    if(keysJustDown[K_LEFT]){
-                        do{
-                            activeSave->useSelected--;
-                            if(activeSave->useSelected < 0){
-                                activeSave->useSelected = USE_COUNT-1;
+                    drawBox(consoleW-18, invY+consoleHH, 17, 5);
+                    putStr(consoleW-11, invY+consoleHH+1, C_WHITE, "[ ]");
+                    putChar(consoleW-10, invY+consoleHH+1, useColor(activeSave->useSelected), useChar(activeSave->useSelected));
+                    putStr(consoleW-10-(strlen(useName(activeSave->useSelected))/2), invY+consoleHH+3, C_WHITE, useName(activeSave->useSelected));
+                    if(activeSave->useSelected == USE_NONE){
+                        for(int i=0;i<USE_COUNT;i++){
+                            if(activeSave->useUnlocked[i]){
+                                activeSave->useSelected = i;
+                                break;
                             }
-                        }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                        }
                     }
-                    if(keysJustDown[K_RIGHT]){
-                        do{
-                            activeSave->useSelected++;
-                            if(activeSave->useSelected >= USE_COUNT){
-                                activeSave->useSelected = 0;
-                            }
-                        }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                    if(activeSave->useSelected != USE_NONE){
+                        int i = activeSave->useSelected % invHC;
+                        int j = activeSave->useSelected / invHC;
+                        putCharA(invX+(i*2)+1, invY+j+1, C_WHITE, '[');
+                        putCharA(invX+(i*2)+3, invY+j+1, C_WHITE, ']');
+                        if(keysJustDown[K_LEFT]){
+                            do{
+                                activeSave->useSelected--;
+                                if(activeSave->useSelected < 0){
+                                    activeSave->useSelected = USE_COUNT-1;
+                                }
+                            }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                        }
+                        if(keysJustDown[K_RIGHT]){
+                            do{
+                                activeSave->useSelected++;
+                                if(activeSave->useSelected >= USE_COUNT){
+                                    activeSave->useSelected = 0;
+                                }
+                            }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                        }
+                        if(keysJustDown[K_UP]){
+                            do{
+                                activeSave->useSelected -= invHC;
+                                if(activeSave->useSelected < 0){
+                                    activeSave->useSelected += USE_COUNT;
+                                }
+                            }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                        }
+                        if(keysJustDown[K_DOWN]){
+                            do{
+                                activeSave->useSelected += invHC;
+                                if(activeSave->useSelected >= USE_COUNT){
+                                    activeSave->useSelected -= USE_COUNT;
+                                }
+                            }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                        }
                     }
-                    if(keysJustDown[K_UP]){
-                        do{
-                            activeSave->useSelected -= invHC;
-                            if(activeSave->useSelected < 0){
-                                activeSave->useSelected += USE_COUNT;
-                            }
-                        }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                    break;
+                }
+                case MENU_PAUSE:{
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_BLUE, "    P A U S E D     ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_BLUE, "     [" STR_K_A "]: save      ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+2, C_LIGHT_BLUE, "  [" STR_K_START "]: resume   ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+3, C_LIGHT_BLUE, "                    ");
+                    if(keysJustDown[K_START]){
+                        menu = MENU_GAME;
                     }
-                    if(keysJustDown[K_DOWN]){
-                        do{
-                            activeSave->useSelected += invHC;
-                            if(activeSave->useSelected >= USE_COUNT){
-                                activeSave->useSelected -= USE_COUNT;
-                            }
-                        }while(!activeSave->useUnlocked[activeSave->useSelected]);
+                    if(keysJustDown[K_A]){
+                        putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_BLUE, "     Saving...      ");
+                        refresh();
+                        saveGame();
+                        menu = MENU_SAVED;
                     }
+                    break;
                 }
-                break;
+                case MENU_GAME_OVER:{
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_RED, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_RED, " G A M E    O V E R ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_RED, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_RED, " [" STR_K_START "]: try again ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_RED, "                    ");
+                    if(keysJustDown[K_START]){
+                        menu = MENU_GAME;
+                        activeArea->leave('?');
+                        activeArea = allAreas[activeSave->spawnAreaIndex];
+                        activeSave->hp = activeSave->spawnHp;
+                        activePlayer->x = activeSave->playerSpawnX;
+                        activePlayer->y = activeSave->playerSpawnY;
+                        activePlayer->invulnerableTimer = 0;
+                        activeArea->enter('?');
+                    }
+                    break;
+                }
+                case MENU_SAVED:{
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_BLUE, "     S A V E D      ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_BLUE, "     [" STR_K_A "]: quit      ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_BLUE, "                    ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+2, C_LIGHT_BLUE, "  [" STR_K_START "]: resume   ");
+                    putStr(consoleW/2-10, consoleHH+consoleHH/2+3, C_LIGHT_BLUE, "                    ");
+                    if(keysJustDown[K_START]){
+                        menu = MENU_GAME;
+                    }
+                    if(keysJustDown[K_A]){
+                        activeArea->leave('?');
+                        delete activePlayer;
+                        menu = MENU_MAIN_MENU;
+                        return true;
+                    }
+                    break;
+                }
             }
-            case MENU_PAUSE:{
-                if(keysJustDown[K_START]){
-                    menu = MENU_GAME;
-                }
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_BLUE, "    P A U S E D     ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_BLUE, "     [" STR_K_A "]: save      ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+2, C_LIGHT_BLUE, "  [" STR_K_START "]: resume   ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+3, C_LIGHT_BLUE, "                    ");
-                if(keysJustDown[K_A]){
-                    saveGame();
-                    menu = MENU_SAVED;
-                }
-                break;
-            }
-            case MENU_GAME_OVER:{
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_RED, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_RED, " G A M E    O V E R ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_RED, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_RED, " [" STR_K_START "]: try again ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_RED, "                    ");
-                if(keysJustDown[K_START]){
-                    menu = MENU_GAME;
-                    activeArea->leave();
-                    activeArea = allAreas[activeSave->spawnAreaIndex];
-                    activeSave->hp = activeSave->spawnHp;
-                    activePlayer->x = activeSave->playerSpawnX;
-                    activePlayer->y = activeSave->playerSpawnY;
-                    activePlayer->invulnerableTimer = 0;
-                    activeArea->enter();
-                }
-                break;
-            }
-            case MENU_SAVED:{
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-3, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-2, C_LIGHT_BLUE, "     S A V E D      ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2-1, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+0, C_LIGHT_BLUE, "     [" STR_K_B "]: quit      ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+1, C_LIGHT_BLUE, "                    ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+2, C_LIGHT_BLUE, "  [" STR_K_START "]: resume   ");
-                putStr(consoleW/2-10, consoleHH+consoleHH/2+3, C_LIGHT_BLUE, "                    ");
-                if(keysJustDown[K_START]){
-                    menu = MENU_GAME;
-                }
-                if(keysJustDown[K_B]){
-                    activeArea->leave();
-                    delete activePlayer;
-                    menu = MENU_MAIN_MENU;
-                    return true;
-                }
-                break;
-            }
-        }
 
-        putStr(0, 0, C_WHITE, "Delta: %f", delta);
-        putStr(0, 1, C_WHITE, "Time: %d", (int)round(secondsElapsed));
-        putStr(0, 2, C_WHITE, "Ents: %d", (int)activeArea->entities.size());
+            putStr(0, 0, C_WHITE, "Delta: %f", delta);
+            putStr(0, 1, C_WHITE, "Time: %d", (int)round(secondsElapsed));
+            putStr(0, 2, C_WHITE, "Ents: %d", (int)activeArea->entities.size());
+            
+            const unsigned char menuY = consoleHH-5;
+            drawBox(0, menuY, consoleW, 5);
+            
+            
+            putStr(7, menuY+1, C_WHITE, "Life");
+            bool flashHp = (activeSave->hp == 1 && int(secondsElapsed*ANIM_TICK_LENGTH)%2==0) || (activeSave->hp == 2 && int(secondsElapsed*ANIM_TICK_LENGTH)%4<2);
+            for(int i=0;i<activeSave->maxHp;i+=2){
+                putChar(12+i/2, menuY+1, flashHp?C_DARK_GREY:C_LIGHT_RED, activeSave->hp > i ? ((activeSave->hp-i == 1) ? '=' : '*') : '-');
+            }
+            
+            putStr(2, menuY+1, C_WHITE, STR_K_A);
+            putChar(2, menuY+2, swordColor(), swordChar());
+            
+            putStr(4, menuY+1, C_WHITE, STR_K_B);
+            putChar(4, menuY+2, useColor(), useChar());
+            
+            bool flashArrows = (activeSave->useSelected == USE_BOW && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+            
+            bool flashBombs = (activeSave->useSelected == USE_BOMB && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+            
+            putStr(7, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "Arrows");
+            putStr(14, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "%d ", activeSave->arrowCount);
+            
+            putStr(7, menuY+3, flashBombs?C_DARK_GREY:C_WHITE, "Bombs");
+            putStr(14, menuY+3, flashBombs?C_DARK_GREY:C_WHITE, "%d ", activeSave->bombCount);
         
-        const unsigned char menuY = consoleHH-5;
-        drawBox(0, menuY, consoleW, 5);
-        
-        
-        putStr(7, menuY+1, C_WHITE, "Life");
-        bool flashHp = (activeSave->hp <= 2 && int(secondsElapsed*ANIM_TICK_LENGTH)%2==0);
-        for(int i=0;i<activeSave->maxHp;i+=2){
-            putChar(12+i/2, menuY+1, flashHp?C_DARK_GREY:C_LIGHT_RED, activeSave->hp > i ? ((activeSave->hp-i == 1) ? '=' : '*') : '-');
         }
-        
-        putStr(2, menuY+1, C_WHITE, STR_K_A);
-        putChar(2, menuY+2, swordColor(), swordChar());
-        
-        putStr(4, menuY+1, C_WHITE, STR_K_B);
-        putChar(4, menuY+2, useColor(), useChar());
-        
-        bool flashUse = (activeSave->useSelected == USE_BOW && activeSave->arrowCount == 0 && activePlayer->useTimer > 0 && int(activePlayer->useTimer*ANIM_TICK_LENGTH)%2==0);
-        
-        putStr(7, menuY+2, flashUse?C_DARK_GREY:C_WHITE, "Arrows");
-        putStr(14, menuY+2, flashUse?C_DARK_GREY:useColor(USE_BOW), "%d ", activeSave->arrowCount);
-    
     }
 
     refresh();
@@ -440,24 +478,37 @@ unsigned char useChar(int use){
         default: return '?';
     }
 }
+const char* useName(int use){
+    switch (use) {
+        case USE_NONE: return "";
+        case USE_BOW: return "Bow";
+        case USE_BOOMERANG: return "Boomerang";
+        case USE_BOMB: return "Bomb";
+        default: return "???";
+    }
+}
 
 void moveAreas(int portalIndex){
-    activeArea->leave();
+    activeArea->leave(activeArea->portals[portalIndex].id);
     char fromId = activeArea->portals[portalIndex].id;
     Area* prevArea = activeArea;
     activeArea = prevArea->portals[portalIndex].out;
 
+    char toId = fromId;
+    int x = R(activePlayer->x);
+    int y = R(activePlayer->y);
+    
     switch(fromId){
-        case 'S': activePlayer->y = 0; break;
-        case 'N': activePlayer->y = areaH-1; break;
-        case 'E': activePlayer->x = 0; break;
-        case 'W': activePlayer->x = areaW-1; break;
+        case 'S': y = 0; toId = 'N'; break;
+        case 'N': y = areaH-1; toId = 'S'; break;
+        case 'E': x = 0; toId = 'W'; break;
+        case 'W': x = areaW-1; toId = 'E'; break;
         default:{
             for(int i = 0; i < activeArea->portalCount; i++){
                 if(activeArea->portals[i].id == fromId){
                     int p = activeArea->portals[i].pos;
-                    int x = AREA_X(p);
-                    int y = AREA_Y(p);
+                    x = AREA_X(p);
+                    y = AREA_Y(p);
                     if(!activeArea->tileAt(x+1, y).isSolid()){
                         x++;
                     }else if(!activeArea->tileAt(x-1, y).isSolid()){
@@ -467,8 +518,6 @@ void moveAreas(int portalIndex){
                     }else if(!activeArea->tileAt(x, y-1).isSolid()){
                         y--;
                     }
-                    activePlayer->x = x;
-                    activePlayer->y = y;
                     break;
                 }
             }
@@ -476,6 +525,9 @@ void moveAreas(int portalIndex){
         }
     }
     
-    activeArea->enter();
+    activePlayer->x = x;
+    activePlayer->y = y;
+    
+    activeArea->enter(toId);
 
 }

@@ -67,11 +67,13 @@ void Boomerang::update(){
     
     if(R(x) < 0 || R(y) < 0 || R(x) >= areaW || R(y) >= areaH){
         returnToPlayer = true;
+        return;
     }
     
     if(R(x) == R(activePlayer->x) && R(y) == R(activePlayer->y)){
-        activeArea->boomerangOut = false;
+        boomerangOut = false;
         mark = MARK_DELETE;
+        return;
     }
     
     if(activeArea->attackPlace(R(x+dx), R(y+dy), this, 0, ATTACK_TYPE_STUN, isTargetForBoomerang)){

@@ -57,6 +57,8 @@
 
 #define SAVE_COUNT 3
 
+#define ANIM_TICK_LENGTH 10
+
 extern bool keysLast[14];
 extern bool keysNow[14];
 extern bool keysJustDown[14];
@@ -77,6 +79,7 @@ struct SaveData{
     int useSelected;
     int sword;
     int arrowCount;
+    int bombCount;
 };
 
 extern SaveData allSaves[SAVE_COUNT];
@@ -87,13 +90,17 @@ extern float secondsElapsed;
 
 struct Area;
 class Player;
+class Dialog;
 
 extern Area* activeArea;
 extern Player* activePlayer;
+extern Dialog* activeDialog;
+
+extern bool boomerangOut;
 
 // Functions defined in main???.cpp
 void debug(const char* fmt, ...);
-void putChar(const unsigned char x, const unsigned char y, const unsigned char color, const char c);
+void putChar(int x, int y, unsigned char color, char c);
 void refresh();
 
 // Functions called from main???.cpp
@@ -106,13 +113,15 @@ float randf();
 void moveAreas(int portalIndex);
 void putStr(const unsigned char x, const unsigned char y, const unsigned char color, const char* fmt, ...);
 
-
-void putCharA(const unsigned char x, const unsigned char y, const unsigned char color, const char c);
+void drawFill(int x, int y, int w, int h, unsigned char color, char c);
+void putCharA(int x, int y, unsigned char color, char c);
 unsigned char swordColor();
 unsigned char swordChar();
 unsigned char swordDamage();
 unsigned char useColor(int use = activeSave->useSelected);
 unsigned char useChar(int use = activeSave->useSelected);
+const char* useName(int use = activeSave->useSelected);
+void closeDialog();
 
 
 

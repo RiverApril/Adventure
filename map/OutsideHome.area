@@ -50,7 +50,3 @@ yyyyyyyyyyyyyyyyyyyyYyyyYyyyyyyyyyyy
 a:InsideHome
 c:T1Entrance
 */
-
-void onUpdate() {
-  
-}

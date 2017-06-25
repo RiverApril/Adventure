@@ -158,8 +158,8 @@ for filePath in filePaths:
     areasCppAfter += "};\n"
 
     areasCpp += "void onUpdateArea" + name + "(){" + onUpdate + "}\n"
-    areasCpp += "void onEnterArea" + name + "(){" + onEnter + "}\n"
-    areasCpp += "void onLeaveArea" + name + "(){" + onLeave + "}\n"
+    areasCpp += "void onEnterArea" + name + "(char sym){" + onEnter + "}\n"
+    areasCpp += "void onLeaveArea" + name + "(char sym){" + onLeave + "}\n"
 
     poiCountInt = 0
     pois = "{"

@@ -31,14 +31,16 @@ void Arrow::update(){
         y += dy;
     }else{
         mark = MARK_DELETE;
+        return;
     }
     if(x < 0 || y < 0 || x >= areaW || y >= areaH){
         mark = MARK_DELETE;
+        return;
     }
     
     if(activeArea->attackPlace(R(x+dx), R(y+dy), this, 1, ATTACK_TYPE_NORMAL, isTargetForArrow)){
         mark = MARK_DELETE;
+        return;
     }
-    
     putCharA(R(x), R(y), useColor(USE_BOW), DIR_X(dir)==0?'|':'-');
 }

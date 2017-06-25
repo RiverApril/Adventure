@@ -66,26 +66,27 @@ struct Area{
 
     int index;
     const char* name;
-    Tile* tiles;
+    Tile (&tiles)[areaW*areaH];
     int portalCount;
     Portal* portals;
     int poiCount;
     Poi* pois;
-    void (*onUpdate)() = 0;
-    void (*onEnter)() = 0;
-    void (*onLeave)() = 0;
+    void (*onUpdate)() = nullptr;
+    void (*onEnter)(char) = nullptr;
+    void (*onLeave)(char) = nullptr;
     std::vector<Entity*> entities;
-    bool boomerangOut = false;
 
-    Area(int index, const char* name, Tile* tiles, int portalCount, Portal* portals
-        , int poiCount, Poi* pois, void (*onUpdate)(), void (*onEnter)(), void (*onLeave)()) : index(index), name(name)
+    Area(int index, const char* name, Tile (&tiles)[areaW*areaH], int portalCount, Portal* portals
+        , int poiCount, Poi* pois, void (*onUpdate)(), void (*onEnter)(char), void (*onLeave)(char)) : index(index), name(name)
     , tiles(tiles), portalCount(portalCount), portals(portals), poiCount(poiCount), pois(pois)
     , onUpdate(onUpdate), onEnter(onEnter), onLeave(onLeave){}
 
 
     void update();
-    void enter();
-    void leave();
+    void enter(char sym);
+    void leave(char sym);
+    
+    void drawTiles();
     
     bool isPlaceSolid(int x, int y, Entity* from, bool(*isEntitySolid)(Entity*));
     bool attackPlace(int x, int y, Entity* attacker, int damage, int type, bool(*isEntityTarget)(Entity*));

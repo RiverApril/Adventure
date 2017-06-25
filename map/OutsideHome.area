@@ -1,0 +1,56 @@
+/* BEGIN AREA OutsideHome
+   ,-____|___,-----,___\______,----,
+  //|____/______,-,----/,__,----,___
+ ///|__,/_,-,___| |___,\------,__,--
+|\//                         ,-___,-
+|||    ____________         //|_,---
+|\|   |'+--------+'|       ///|_____
+|/|   | |________| |      |\//      
+|||   |/          \|      |||       
+|\|   |------------|      |\|       
+|||   |  ,-,  ==== |      |||       
+|||   '--| |-------'      |/|       
+|\|        ,              |||       
+|||          ,  '          \\\______
+|||      '      ,   '       '--~--~-
+|\|          '   .     '            
+|/|                 '               
+####################################
+#################c##################
+#################.##################
+####.........................#######
+###.........................########
+###...##############.......#########
+###...##############......####......
+###...##############......###.......
+###...##############......###.......
+###...####a#########......###.......
+###...####.#########......###.......
+###.......................###.......
+###........................###......
+###.........................########
+####................................
+#########...........................
+yyyyyyyyyYyyyyyyyyyyyyyYyyyyyyyyyyyy
+yyyyyyyyyYyyyyyyyyyyyyyYyyyyyyyyyyyy
+yyyyyyyyYyyyyyyyyyyyyyyYyyyyyyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyyYYyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyyyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyYyyyyyyyyyyyyyyYYYyyyyyyy
+yyyyyyyyyyyyyYyyYyyyyyyyyyYYYYYYYYYY
+yyyyyyyyyYyYyyyyYyyyYyYyyyyyYYYYYYYY
+yyyyyyyyyyyyyYyyyYyyyyyYyyyyyyyyyyyy
+yyyyyyyyyyyyyyyyyyyyYyyyYyyyyyyyyyyy
+a:InsideHome
+c:T1Entrance
+*/
+
+void onUpdate() {
+  
+}

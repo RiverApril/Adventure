@@ -1,0 +1,60 @@
+/* BEGIN AREA T1SlimeRoom
+                                    
+      _________________________     
+     |\                       /|    
+     | \                     / |    
+     |  \___________________/  |    
+     |  |                   |  |    
+     |  |                   |  |    
+     ||\|                   |/||    
+     || |                   | ||    
+     ||/|                   |\||    
+     |  |                   |  |    
+     |  |___________________|  |    
+     |  /                   \  |    
+     | /                     \ |    
+     |/_______________________\|    
+                                    
+####################################
+####################################
+####################################
+####################################
+####################################
+#########...................########
+#########..s.............s..########
+#########...................########
+######a.......s.......s.......c#####
+#########...................########
+#########..s.............s..########
+#########...................########
+####################################
+####################################
+####################################
+####################################
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+a:T1Entrance
+*/
+
+void onEnter(){
+    for(int i=0;i<activeArea->poiCount;i++){
+        Poi poi = activeArea->pois[i];
+        if(poi.sym == 's'){
+            activeArea->entities.push_back(new Slime(AREA_X(poi.pos), AREA_Y(poi.pos)));
+        }
+    }
+}

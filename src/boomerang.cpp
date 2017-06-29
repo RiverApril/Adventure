@@ -7,12 +7,12 @@
 #define BOOMERANG_DISTANCE 6
 
 bool isSolidForBoomerang(Entity* e){
-    Living* l = dynamic_cast<Living*>(e);
-    return l && l->hp > 0 && !dynamic_cast<Player*>(e);
+    CanBeHit* c = dynamic_cast<CanBeHit*>(e);
+    return (c && c->shouldBeSolid()) && !dynamic_cast<Player*>(e);
 }
 
 bool isTargetForBoomerang(Entity* e){
-    return dynamic_cast<Living*>(e) && !dynamic_cast<Player*>(e);
+    return isSolidForBoomerang(e);
 }
 
 Boomerang::Boomerang(int x, int y, unsigned char dir) : Entity(x, y), Projectile(){

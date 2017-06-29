@@ -132,22 +132,24 @@ void startGame(int i){
         activeSave->hp = 6;
         activeSave->maxHp = 6;
         activeSave->spawnHp = 6;
-        activeSave->playerX = 10; // only set these when entering a room
-        activeSave->playerY = 10; // ''
-        activeSave->playerSpawnX = 10;
-        activeSave->playerSpawnY = 10;
-        activeSave->areaIndex = areaOutsideHome->index;
-        activeSave->spawnAreaIndex = areaOutsideHome->index;
+        activeSave->playerX = 21; // only set these when entering a room
+        activeSave->playerY = 6; // ''
+        activeSave->playerSpawnX = 21;
+        activeSave->playerSpawnY = 6;
+        activeSave->areaIndex = areaInsideHome->index;
+        activeSave->spawnAreaIndex = areaInsideHome->index;
         for(int i=0;i<USE_COUNT;i++){
-            activeSave->useUnlocked[i] = rand()%2;
+            activeSave->useUnlocked[i] = false;//rand()%2;
         }
-        activeSave->useUnlocked[USE_BOW] = true;
-        activeSave->useUnlocked[USE_BOOMERANG] = true;
-        activeSave->useUnlocked[USE_BOMB] = true;
+        //activeSave->useUnlocked[USE_BOW] = true;
+        //activeSave->useUnlocked[USE_BOOMERANG] = true;
+        //activeSave->useUnlocked[USE_BOMB] = true;
         activeSave->useSelected = USE_NONE;
-        activeSave->sword = SWORD_BASIC;
+        activeSave->sword = SWORD_STICK;
+        activeSave->keyCount = 0;
         activeSave->arrowCount = 20;
         activeSave->bombCount = 20;
+        activeSave->areaData = AreaSaveData();
     }
     
     activeArea = allAreas[activeSave->areaIndex];
@@ -155,6 +157,7 @@ void startGame(int i){
     activePlayer = new Player(activeSave->playerX, activeSave->playerY);
     
     activeArea->enter('?');
+    saveGame();
 }
 
 #define MENU_MAIN_MENU 0
@@ -224,14 +227,14 @@ bool update(float d){
             }
             putStr(2, consoleHH+6+SAVE_COUNT, C_WHITE, "[" STR_K_START "]: play");
             putStr(2, consoleHH+7+SAVE_COUNT, C_WHITE, "[" STR_K_L "]+[" STR_K_R "]+[" STR_K_START "]: delete");
-            if(keysJustDown[K_START]){
-                if(keysNow[K_L] && keysNow[K_R]){
-                    allSaves[mainSelected].started = false;
-                }else if(keysNow[K_X] && keysNow[K_Y]){ // cheat recover code
-                    allSaves[mainSelected].started = true;
-                }
-            }
-            if(keysJustDown[K_START] || keysJustDown[K_A]){
+            
+            if(keysNow[K_L] && keysNow[K_R] && keysJustDown[K_START]){ // delete
+                allSaves[mainSelected].started = false;
+                saveGame();
+            }else if(keysNow[K_X] && keysNow[K_Y] && keysJustDown[K_START]){ // cheat recover code
+                allSaves[mainSelected].started = true;
+                saveGame();
+            }else if(keysJustDown[K_START] || keysJustDown[K_A]){ // start
                 startGame(mainSelected);
                 menu = MENU_GAME;
             }
@@ -388,6 +391,7 @@ bool update(float d){
                         activeArea->leave('?');
                         delete activePlayer;
                         menu = MENU_MAIN_MENU;
+                        refresh();
                         return true;
                     }
                     break;
@@ -397,6 +401,7 @@ bool update(float d){
             putStr(0, 0, C_WHITE, "Delta: %f", delta);
             putStr(0, 1, C_WHITE, "Time: %d", (int)round(secondsElapsed));
             putStr(0, 2, C_WHITE, "Ents: %d", (int)activeArea->entities.size());
+            putStr(0, 3, C_WHITE, "Player: %d, %d ", R(activePlayer->x), R(activePlayer->y));
             
             const unsigned char menuY = consoleHH-5;
             drawBox(0, menuY, consoleW, 5);
@@ -414,15 +419,21 @@ bool update(float d){
             putStr(4, menuY+1, C_WHITE, STR_K_B);
             putChar(4, menuY+2, useColor(), useChar());
             
-            bool flashArrows = (activeSave->useSelected == USE_BOW && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+            if(activeSave->useUnlocked[USE_BOW]){
+                bool flashArrows = (activeSave->useSelected == USE_BOW && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+                putStr(7, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "Arrows");
+                putStr(14, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "%d ", activeSave->arrowCount);
+            }
             
-            bool flashBombs = (activeSave->useSelected == USE_BOMB && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+            if(activeSave->useUnlocked[USE_BOMB]){
+                bool flashBombs = (activeSave->useSelected == USE_BOMB && int(activePlayer->outOfSomethingFlashTimer*ANIM_TICK_LENGTH)%2==1);
+                putStr(18, menuY+2, flashBombs?C_DARK_GREY:C_WHITE, "Bombs");
+                putStr(24, menuY+2, flashBombs?C_DARK_GREY:C_WHITE, "%d ", activeSave->bombCount);
+            }
             
-            putStr(7, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "Arrows");
-            putStr(14, menuY+2, flashArrows?C_DARK_GREY:C_WHITE, "%d ", activeSave->arrowCount);
-            
-            putStr(7, menuY+3, flashBombs?C_DARK_GREY:C_WHITE, "Bombs");
-            putStr(14, menuY+3, flashBombs?C_DARK_GREY:C_WHITE, "%d ", activeSave->bombCount);
+            bool flashKeys = int(activePlayer->outOfKeysFlashTimer*ANIM_TICK_LENGTH)%2==1;
+            putStr(7, menuY+3, flashKeys?C_DARK_GREY:C_WHITE, "Keys");
+            putStr(12, menuY+3, flashKeys?C_DARK_GREY:C_WHITE, "%d ", activeSave->keyCount);
         
         }
     }
@@ -443,6 +454,7 @@ unsigned char swordColor(){
     switch (activeSave->sword) {
         case SWORD_NONE: return C_WHITE;
         case SWORD_BASIC: return C_LIGHT_GREY;
+        case SWORD_STICK: return C_DARK_YELLOW;
         default: return C_WHITE;
     }
 }
@@ -450,14 +462,24 @@ unsigned char swordChar(){
     switch (activeSave->sword) {
         case SWORD_NONE: return ' ';
         case SWORD_BASIC: return '/';
+        case SWORD_STICK: return '/';
         default: return '?';
     }
 }
-unsigned char swordDamage(){
+int swordDamage(){
     switch (activeSave->sword) {
         case SWORD_NONE: return 0;
         case SWORD_BASIC: return 1;
+        case SWORD_STICK: return 1;
         default: return 0;
+    }
+}
+const char* swordName(){
+    switch (activeSave->sword) {
+        case SWORD_NONE: return "Nothing";
+        case SWORD_STICK: return "Stick";
+        case SWORD_BASIC: return "Basic Sword";
+        default: return "???";
     }
 }
 unsigned char useColor(int use){
@@ -484,6 +506,15 @@ const char* useName(int use){
         case USE_BOW: return "Bow";
         case USE_BOOMERANG: return "Boomerang";
         case USE_BOMB: return "Bomb";
+        default: return "???";
+    }
+}
+const char* usePickupName(int use){
+    switch (use) {
+        case USE_NONE: return "";
+        case USE_BOW: return "Bow and quiver";
+        case USE_BOOMERANG: return "Boomerang";
+        case USE_BOMB: return "Bomb bag";
         default: return "???";
     }
 }

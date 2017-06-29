@@ -14,9 +14,11 @@ using namespace std;
 class Dialog{
 public:
     
-    Dialog(bool shouldBeDeleted, unsigned char style, vector<string> pages) : shouldBeDeleted(shouldBeDeleted), style(style), pages(pages){}
+    Dialog(unsigned char style, vector<string> pages) : style(style), pages(pages){}
+    Dialog(vector<string> pages) : style(DIALOG_STYLE_BOTTOM), pages(pages){}
     
-    bool shouldBeDeleted;
+    string speaker = "";
+    bool shouldBeDeleted = true;
     unsigned char style;
     vector<string> pages;
     int page = 0;

@@ -30,13 +30,22 @@ public:
 
 };
 
-class Living{
+class Living;
+
+class CanBeHit{
+public:
+    CanBeHit(){}
+    virtual ~CanBeHit(){}
+    virtual bool receiveAttack(Entity* attacker, int damage, int type){return false;}
+    
+    bool shouldBeSolid();
+};
+
+class Living : public CanBeHit {
 public:
     
-    Living(int hp) : hp(hp){maxHp=hp;}
+    Living(int hp) : hp(hp), CanBeHit(){maxHp=hp;}
     virtual ~Living(){}
-    
-    virtual bool receiveAttack(Entity* attacker, int damage, int type){return false;}
     
     int maxHp;
     int hp;
@@ -72,6 +81,12 @@ public:
     virtual ~Projectile(){}
 };
 
+
+struct ColorSym{
+    ColorSym(unsigned char color, char sym) : color(color), sym(sym){}
+    unsigned char color;
+    char sym;
+};
 
 
 #endif

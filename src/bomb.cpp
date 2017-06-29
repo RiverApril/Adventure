@@ -4,7 +4,7 @@
 #include "player.hpp"
 
 bool isTargetForBomb(Entity* e){
-    return dynamic_cast<Living*>(e) && !dynamic_cast<Player*>(e);
+    return dynamic_cast<CanBeHit*>(e) && !dynamic_cast<Player*>(e);
 }
 
 Bomb::Bomb(int x, int y) : Entity(x, y){

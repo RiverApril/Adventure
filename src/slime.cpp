@@ -11,7 +11,8 @@ bool isTargetForSlime(Entity* e){
 }
 
 bool isSolidForSlime(Entity* e){
-    return dynamic_cast<Living*>(e) && !isTargetForSlime(e);
+    CanBeHit* c = dynamic_cast<CanBeHit*>(e);
+    return (c && c->shouldBeSolid()) && !isTargetForSlime(e);
 }
 
 Slime::Slime(int x, int y) : Entity(x, y), Living(1), Stunnable(5){

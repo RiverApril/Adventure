@@ -3,6 +3,8 @@
 #ifndef global_hpp
 #define global_hpp
 
+#include "areaSaveData.hpp"
+
 #include <cmath>
 #include <vector>
 #include <stdlib.h>
@@ -15,7 +17,9 @@
 #define C_DARK_MAGENTA 5
 #define C_DARK_CYAN 6
 #define C_LIGHT_GREY 7
+#define C_LIGHT_GRAY 7
 #define C_DARK_GREY 8
+#define C_DARK_GRAY 8
 #define C_LIGHT_RED 9
 #define C_LIGHT_GREEN 10
 #define C_LIGHT_YELLOW 11
@@ -30,6 +34,26 @@
 #define consoleW 36
 #define consoleHH 16
 #define consoleH (consoleHH*2)
+
+#define areaW consoleW
+#define areaH consoleHH
+
+#define DIR_E 0
+#define DIR_N 1
+#define DIR_W 2
+#define DIR_S 3
+
+#define PORTAL_POS_E (-1)
+#define PORTAL_POS_N (-2)
+#define PORTAL_POS_W (-3)
+#define PORTAL_POS_S (-4)
+
+#define DIR_X(d) ((d)==DIR_E?1:((d)==DIR_W?-1:0))
+#define DIR_Y(d) ((d)==DIR_S?1:((d)==DIR_N?-1:0))
+
+#define AREA_POS(x, y) ((y)*areaW+(x))
+#define AREA_X(p) ((p) % areaW)
+#define AREA_Y(p) ((p) / areaW)
 
 #define K_A 0
 #define K_B 1
@@ -53,7 +77,8 @@
 #define USE_COUNT 36
 
 #define SWORD_NONE (-1)
-#define SWORD_BASIC 0
+#define SWORD_STICK 0
+#define SWORD_BASIC 1
 
 #define SAVE_COUNT 3
 
@@ -78,8 +103,10 @@ struct SaveData{
     bool useUnlocked[USE_COUNT];
     int useSelected;
     int sword;
+    int keyCount;
     int arrowCount;
     int bombCount;
+    AreaSaveData areaData;
 };
 
 extern SaveData allSaves[SAVE_COUNT];
@@ -117,10 +144,12 @@ void drawFill(int x, int y, int w, int h, unsigned char color, char c);
 void putCharA(int x, int y, unsigned char color, char c);
 unsigned char swordColor();
 unsigned char swordChar();
-unsigned char swordDamage();
+int swordDamage();
+const char* swordName();
 unsigned char useColor(int use = activeSave->useSelected);
 unsigned char useChar(int use = activeSave->useSelected);
 const char* useName(int use = activeSave->useSelected);
+const char* usePickupName(int use = activeSave->useSelected);
 void closeDialog();
 
 

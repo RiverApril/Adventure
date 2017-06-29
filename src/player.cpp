@@ -5,15 +5,21 @@
 #include "arrow.hpp"
 #include "boomerang.hpp"
 #include "bomb.hpp"
+#include "npc.hpp"
+#include "lock.hpp"
+#include "chest.hpp"
 
 #define PLAYER_SPEED 10
 
 bool isTargetForPlayer(Entity* e){
-    return dynamic_cast<Living*>(e);
+    CanBeHit* c = dynamic_cast<CanBeHit*>(e);
+    return (c && c->shouldBeSolid());
 }
 
 bool isSolidForPlayer(Entity* e){
-    return false;
+    CanBeHit* c = dynamic_cast<CanBeHit*>(e);
+    Lock* l = dynamic_cast<Lock*>(e);
+    return (c && c->shouldBeSolid()) || dynamic_cast<Npc*>(e) || dynamic_cast<Chest*>(e) || (l && l->locked);
 }
 
 void Player::update(){
@@ -68,6 +74,9 @@ void Player::update(){
     if(outOfSomethingFlashTimer > 0){
         outOfSomethingFlashTimer -= delta;
     }
+    if(outOfKeysFlashTimer > 0){
+        outOfKeysFlashTimer -= delta;
+    }
     
     if(swingCooldownTimer > 0){
         swingCooldownTimer -= delta;
@@ -85,43 +94,97 @@ void Player::update(){
     }
     if(swingTimer > 0){
         swingTimer -= delta;
-        int xx = 0;
-        int yy = 0;
-        char cc;
-        if(swingTimer > (SWING_TIMER_MAX / 3 * 2)){
-            xx += (faceDir == DIR_E || faceDir == DIR_S) ? 1 : -1;
-            yy += (faceDir == DIR_W || faceDir == DIR_S) ? 1 : -1;
-            cc = (faceDir == DIR_E || faceDir == DIR_W) ? '/' : '\\';
-        } else if(swingTimer > (SWING_TIMER_MAX / 3)){
-            xx += (faceDir == DIR_E) ? 1 : ((faceDir == DIR_W) ? -1 : 0);
-            yy += (faceDir == DIR_S) ? 1 : ((faceDir == DIR_N) ? -1 : 0);
-            cc = (faceDir == DIR_N || faceDir == DIR_S) ? '|' : '-';
-            char ccc = (faceDir == DIR_N) ? ',' : ((faceDir == DIR_S) ? '\'' : '-');
-            int xxx = R(x)+xx*2;
-            int yyy = R(y)+yy*2;
-            putCharA(xxx, yyy, swordColor(), ccc);
-            activeArea->attackPlace(xxx, yyy, this, swordDamage(), ATTACK_TYPE_NORMAL, isTargetForPlayer);
-        } else {
-            xx += (faceDir == DIR_E || faceDir == DIR_N) ? 1 : -1;
-            yy += (faceDir == DIR_E || faceDir == DIR_S) ? 1 : -1;
-            cc = (faceDir == DIR_N || faceDir == DIR_S) ? '/' : '\\';
+        switch(activeSave->sword){
+            case SWORD_STICK:{
+                int xx = R(x)+DIR_X(faceDir);
+                int yy = R(y)+DIR_Y(faceDir);
+                char cc = (faceDir == DIR_N || faceDir == DIR_S) ? '|' : '-';
+                putCharA(xx, yy, swordColor(), cc);
+                activeArea->attackPlace(xx, yy, this, swordDamage(), ATTACK_TYPE_NORMAL, isTargetForPlayer);
+                break;
+            }
+            case SWORD_BASIC:{
+                int xx = 0;
+                int yy = 0;
+                char cc;
+                if(swingTimer > (SWING_TIMER_MAX / 3 * 2)){
+                    xx += (faceDir == DIR_E || faceDir == DIR_S) ? 1 : -1;
+                    yy += (faceDir == DIR_W || faceDir == DIR_S) ? 1 : -1;
+                    cc = (faceDir == DIR_E || faceDir == DIR_W) ? '/' : '\\';
+                } else if(swingTimer > (SWING_TIMER_MAX / 3)){
+                    xx += (faceDir == DIR_E) ? 1 : ((faceDir == DIR_W) ? -1 : 0);
+                    yy += (faceDir == DIR_S) ? 1 : ((faceDir == DIR_N) ? -1 : 0);
+                    cc = (faceDir == DIR_N || faceDir == DIR_S) ? '|' : '-';
+                    char ccc = (faceDir == DIR_N) ? ',' : ((faceDir == DIR_S) ? '\'' : '-');
+                    int xxx = R(x)+xx*2;
+                    int yyy = R(y)+yy*2;
+                    putCharA(xxx, yyy, swordColor(), ccc);
+                    activeArea->attackPlace(xxx, yyy, this, swordDamage(), ATTACK_TYPE_NORMAL, isTargetForPlayer);
+                } else {
+                    xx += (faceDir == DIR_E || faceDir == DIR_N) ? 1 : -1;
+                    yy += (faceDir == DIR_E || faceDir == DIR_S) ? 1 : -1;
+                    cc = (faceDir == DIR_N || faceDir == DIR_S) ? '/' : '\\';
+                }
+                xx += R(x);
+                yy += R(y);
+                putCharA(xx, yy, swordColor(), cc);
+                activeArea->attackPlace(xx, yy, this, swordDamage(), ATTACK_TYPE_NORMAL, isTargetForPlayer);
+                break;
+            }
         }
-        xx += R(x);
-        yy += R(y);
-        putCharA(xx, yy, swordColor(), cc);
-        activeArea->attackPlace(xx, yy, this, swordDamage(), ATTACK_TYPE_NORMAL, isTargetForPlayer);
     }
     
     if(useTimer <= 0){
         if(keysJustDown[K_Y] || keysJustDown[K_A]){
-            switch (activeSave->sword) {
-                case SWORD_BASIC:{
-                    if(swingCooldownTimer <= 0 && swingTimer <= 0){
-                        swingTimer = SWING_TIMER_MAX;
-                        swingCooldownTimer = SWING_COOLDOWN_TIMER_MAX+SWING_TIMER_MAX;
-                        faceDir = dir;
+            
+            Npc* npc = nullptr;
+            Lock* lock = nullptr;
+            Chest* chest = nullptr;
+            for(Entity* e : activeArea->entities){
+                if(R(x+DIR_X(dir)) == R(e->x) && R(y+DIR_Y(dir)) == R(e->y)){
+                    npc = dynamic_cast<Npc*>(e);
+                    lock = dynamic_cast<Lock*>(e);
+                    chest = dynamic_cast<Chest*>(e);
+                    if(npc || lock || chest){
+                        break;
                     }
-                    break;
+                }
+            }
+            if(npc){
+                activeDialog = npc->dialog;
+                
+            }else if(lock){
+                if(lock->keyable){
+                    if(activeSave->keyCount > 0){
+                        activeSave->keyCount--;
+                        lock->locked = false;
+                    }else{
+                        outOfKeysFlashTimer = OUT_OF_SOMETHING_FLASH_TIMER_MAX;
+                    }
+                }else{
+                    activeDialog = new Dialog({"The door is locked but there's no place for a key."});
+                }
+            }else if(chest){
+                chest->open();
+                
+            }else{
+                switch (activeSave->sword) {
+                    case SWORD_STICK:{
+                        if(swingCooldownTimer <= 0 && swingTimer <= 0){
+                            swingTimer = STAB_TIMER_MAX;
+                            swingCooldownTimer = SWING_COOLDOWN_TIMER_MAX+STAB_TIMER_MAX;
+                            faceDir = dir;
+                        }
+                        break;
+                    }
+                    case SWORD_BASIC:{
+                        if(swingCooldownTimer <= 0 && swingTimer <= 0){
+                            swingTimer = SWING_TIMER_MAX;
+                            swingCooldownTimer = SWING_COOLDOWN_TIMER_MAX+SWING_TIMER_MAX;
+                            faceDir = dir;
+                        }
+                        break;
+                    }
                 }
             }
         }
@@ -181,6 +244,8 @@ void Player::update(){
         putCharA(R(x), R(y), int(animTick) % 2 == 0 ?C_WHITE:C_DARK_GREY, '@');
     }else{
         putCharA(R(x), R(y), C_WHITE, '@');
+        //putCharA(R(x), R(y)-1, C_WHITE, 'o');
+        //putCharA(R(x), R(y), C_WHITE, (tryToMove && (int(animTick) % 2 == 0))?(DIR_Y(dir)==0?'X':'Y'):(DIR_Y(dir)==0?'Y':'X'));
     }
     
 

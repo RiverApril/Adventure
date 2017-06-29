@@ -4,6 +4,7 @@
 #include "entity.hpp"
 
 
+#define STAB_TIMER_MAX 0.1
 #define SWING_TIMER_MAX 0.2
 #define SWING_COOLDOWN_TIMER_MAX 0.1
 
@@ -14,7 +15,7 @@
 #define OUT_OF_SOMETHING_FLASH_TIMER_MAX 1.0
 
 
-class Player : public Entity, public Living{
+class Player : public Entity, public CanBeHit{
 public:
     
     float swingCooldownTimer = 0;
@@ -22,11 +23,12 @@ public:
     float invulnerableTimer = 0;
     float useTimer = 0;
     float outOfSomethingFlashTimer = 0;
+    float outOfKeysFlashTimer = 0;
     
     unsigned char faceDir = 0;
     
     
-    Player(int x, int y) : Entity(x, y), Living(6){}
+    Player(int x, int y) : Entity(x, y), CanBeHit(){}
     virtual ~Player(){}
 
     void update();

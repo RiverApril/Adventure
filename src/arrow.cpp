@@ -6,12 +6,12 @@
 #define ARROW_SPEED 20
 
 bool isSolidForArrow(Entity* e){
-    Living* l = dynamic_cast<Living*>(e);
-    return l && l->hp > 0 && !dynamic_cast<Player*>(e);
+    CanBeHit* c = dynamic_cast<CanBeHit*>(e);
+    return (c && c->shouldBeSolid()) && !dynamic_cast<Player*>(e);
 }
 
 bool isTargetForArrow(Entity* e){
-    return dynamic_cast<Living*>(e) && !dynamic_cast<Player*>(e);
+    return isSolidForArrow(e);
 }
 
 Arrow::Arrow(int x, int y, unsigned char dir) : Entity(x, y), Projectile(){

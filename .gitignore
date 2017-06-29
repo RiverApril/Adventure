@@ -9,6 +9,7 @@ Adventure.sav
 
 # XCode:
 *.xcodeproj/
+preActionLog\.txt
 
 # CMake:
 cmake/

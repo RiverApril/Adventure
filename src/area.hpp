@@ -3,28 +3,9 @@
 
 #include "global.hpp"
 
-#define areaW consoleW
-#define areaH consoleHH
-
-#define DIR_E 0
-#define DIR_N 1
-#define DIR_W 2
-#define DIR_S 3
-
-#define PORTAL_POS_E (-1)
-#define PORTAL_POS_N (-2)
-#define PORTAL_POS_W (-3)
-#define PORTAL_POS_S (-4)
-
-#define DIR_X(d) ((d)==DIR_E?1:((d)==DIR_W?-1:0))
-#define DIR_Y(d) ((d)==DIR_S?1:((d)==DIR_N?-1:0))
-
-#define AREA_POS(x, y) ((y)*areaW+(x))
-#define AREA_X(p) ((p) % areaW)
-#define AREA_Y(p) ((p) / areaW)
-
 #define TILE_TYPE_AIR 0
 #define TILE_TYPE_SOLID 1
+#define TILE_TYPE_ABOVE 2
 
 struct Tile{
     Tile(){}
@@ -37,8 +18,13 @@ struct Tile{
         switch(type){
             case TILE_TYPE_AIR: return false;
             case TILE_TYPE_SOLID: return true;
+            case TILE_TYPE_ABOVE: return false;
             default: return false;
         }
+    }
+    
+    bool isAbove(){
+        return type == TILE_TYPE_ABOVE;
     }
     
     bool receiveAttack(int damage, int type){
@@ -92,9 +78,8 @@ struct Area{
     bool attackPlace(int x, int y, Entity* attacker, int damage, int type, bool(*isEntityTarget)(Entity*));
     
     Tile tileAt(int x, int y) {
-        int i = y*areaW+x;
-        if(i >= 0 && i < areaW*areaH){
-            return (tiles[i]);
+        if(x >= 0 && x < areaW && y >= 0 && y < areaH){
+            return (tiles[y*areaW+x]);
         }else{
             return Tile(' ', TILE_TYPE_AIR, C_WHITE);
         }

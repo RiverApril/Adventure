@@ -13,10 +13,16 @@ void Dialog::update(){
     
     drawFill(0, consoleH-h, consoleW, h, C_WHITE, ' ');
     
+    if(speaker.size() > 0){
+        putStr(diaX+(w/2)-(speaker.size()/2), diaY+consoleHH, C_WHITE, speaker.c_str());
+        diaY++;
+    }
+    
     int charI = 0;
     int lastSpace = 0;
+    int extra = 0;
     
-    for(int printI=0;printI<scroll||waiting;printI++){
+    for(int printI=0;printI<scroll+extra||waiting;printI++){
         if(pages[page][charI] == ' '){
             lastSpace = charI;
         }
@@ -27,6 +33,7 @@ void Dialog::update(){
                 int y = (printITemp / w) + diaY;
                 putCharA(x, y, C_WHITE, ' ');
                 printITemp--;
+                extra++;
             }
             charI = lastSpace;
             printI--;
@@ -45,7 +52,7 @@ void Dialog::update(){
     }
     
     if(waiting){
-        putCharA(consoleW-1, consoleHH-1, C_WHITE, int(scroll)%12<6?' ':'>');
+        putCharA(consoleW-2, consoleHH-1, C_WHITE, int(scroll)%12<6?' ':'>');
     }
     if(keysJustDown[K_A] || keysJustDown[K_B] || keysJustDown[K_X] || keysJustDown[K_Y]){
         if(waiting){
@@ -53,6 +60,7 @@ void Dialog::update(){
             scroll = 0;
             waiting = false;
             if(page >= pages.size()){
+                page = 0;
                 closeDialog();
             }
         }else{

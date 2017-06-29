@@ -1,0 +1,70 @@
+/* BEGIN AREA CastleGFThrone
+      _________________________     
+     |\                       /|    
+     | \        ,---,        / |    
+     |  \________\#/________/  |    
+     |  |                   |  |    
+     |  |                   |  |    
+     ||\|       ,~~~,       |/||    
+     ||#|       ,\_/,       | ||    
+     ||/|    [] |(_)| []    |\||    
+     |  |    ''  ' '  ''    |  |    
+     |  |     ,~~~~~~~,     |  |    
+     |  |     \     , /     |  |    
+     |  |     \ '     /     |  |    
+     |  |     \    '  /     |  |    
+     |  |     \  '    /     |  |    
+     |  |     \ ,   ' /     |  |    
+####################################
+####################################
+##################b#################
+##################j#################
+#########...................########
+#########...................########
+#########.......#####.......########
+######a.i.......#####.........c#####
+#########....##.##.##.##....########
+#########...................########
+#########...................########
+#########...................########
+#########...................########
+#########...................########
+#########...................########
+#########...................########
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+b:CastleGFStairUpHall
+c:CastleGFDiningL
+S:CastleGFEntrance
+*/
+
+struct AreaData{
+    bool leftDoorLocked = true;
+    bool topDoorLocked = true;
+};
+
+void onEnter(char sym){
+    unsigned char color = C_LIGHT_MAGENTA;
+    for(int i=0;i<activeArea->poiCount;i++){
+        Poi poi = activeArea->pois[i];
+        if(poi.sym == 'i'){
+            activeArea->entities.push_back(new Lock(poi.pos, true, thisAreaSaveData.leftDoorLocked, LockDraw(color, '|', '#'), LockDraw(color, '|', ' '), DIR_W));
+        }else if(poi.sym == 'j'){
+            activeArea->entities.push_back(new Lock(poi.pos, true, thisAreaSaveData.topDoorLocked, LockDraw(color, '#'), LockDraw(color, '_')));
+        }
+    }
+}

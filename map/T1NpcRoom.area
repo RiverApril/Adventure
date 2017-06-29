@@ -1,9 +1,9 @@
-/* BEGIN AREA T1Entrance
+/* BEGIN AREA T1NpcRoom
                                     
       _________________________     
      |\                       /|    
-     | \        ,---,        / |    
-     |  \________\_/________/  |    
+     | \                     / |    
+     |  \___________________/  |    
      |  |                   |  |    
      |  |                   |  |    
      ||\|                   |/||    
@@ -11,24 +11,24 @@
      ||/|                   |\||    
      |  |                   |  |    
      |  |___________________|  |    
-     |  /        / \        \  |    
-     | /        '---'        \ |    
+     |  /                   \  |    
+     | /                     \ |    
      |/_______________________\|    
                                     
 ####################################
 ####################################
 ####################################
-##################d#################
-##################.#################
+####################################
+####################################
+#########...................########
+#########.........n.........########
+#########...................########
+######a.......................b#####
 #########...................########
 #########...................########
 #########...................########
-######b.......................a#####
-#########...................########
-#########...................########
-#########...................########
-##################.#################
-##################c#################
+####################################
+####################################
 ####################################
 ####################################
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -47,13 +47,15 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-c:OutsideHome
-a:T1SlimeRoom
-b:T1NpcRoom
+b:T1Entrance
 */
 
-void onEnter(char sym){
-    if(sym == 'c'){
-        activeDialog = new Dialog({"The quick brown fox jumpped over the lazy dog. Uninterupted mongeese fail to see the beauty in rainforests.", "This is page two...", "Almost done, just making sure multiple pages work.", "One more", "Okay, last one."});
+void onEnter(){
+    for(int i=0;i<activeArea->poiCount;i++){
+        Poi poi = activeArea->pois[i];
+        if(poi.sym == 'n'){
+            Dialog* dialog = new Dialog({"Hello traveler!"});
+            activeArea->entities.push_back(new Npc(AREA_X(poi.pos), AREA_Y(poi.pos), C_WHITE, 'F', "Fordola", dialog));
+        }
     }
 }

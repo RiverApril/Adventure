@@ -1,0 +1,73 @@
+/* BEGIN AREA CastleGFKitchen
+      _________________________     
+     |\                       /|    
+     | \        ,---,        / |    
+     |  \________\=/________/  |    
+     |  | ,____,     ,____, |  |    
+     |  | |_oOo|     |]]\_| |  |    
+     |  | |b_/_|     |_oOO| |  |    
+     |  |                   |  |    
+     |  | ,--,         ,O,  |  |    
+     |  | |==|         '"'  |  |    
+     |  |                   |  |    
+     |  |___________________|  |    
+     |  /        / \        \  |    
+     | /        '---'        \ |    
+     |/_______________________\|    
+                                    
+####################################
+####################################
+##################b#################
+##################i#################
+#########...................########
+#########.######.....######.########
+#########.######.....######.########
+#########...................########
+#########.####..........j...########
+#########.####..............########
+#########...................########
+#########...................########
+##################.#################
+##################a#################
+####################################
+####################################
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmkkkmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmkkkmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+a:CastleGFDiningR
+b:CastleGFStorageRoom
+*/
+
+struct AreaData{
+    bool switchHit = false;
+    bool doorClosed = true;
+};
+
+void onEnter(char sym){
+    unsigned char color = C_LIGHT_MAGENTA;
+    for(int i=0;i<activeArea->poiCount;i++){
+        Poi poi = activeArea->pois[i];
+        if(poi.sym == 'i'){
+            activeArea->entities.push_back(new Lock(poi.pos, false, thisAreaSaveData.doorClosed, LockDraw(color, '='), LockDraw(color, '_')));
+        }else if(poi.sym == 'j'){
+            activeArea->entities.push_back(new HitSwitch(poi.pos, thisAreaSaveData.switchHit, SWITCH_TYPE_TOGGLE, ColorSym(C_DARK_BLUE, 'o'), ColorSym(C_LIGHT_BLUE, 'O')));
+        }
+    }
+}
+
+void onUpdate(){
+    thisAreaSaveData.doorClosed = !thisAreaSaveData.switchHit;
+}

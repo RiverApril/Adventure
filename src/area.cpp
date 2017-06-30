@@ -54,13 +54,18 @@ void Area::enter(char sym){
     activeSave->areaIndex = index;
     boomerangOut = false;
     entities.push_back(activePlayer);
-    drawTiles(); // draw before so there's a something behind the dialog
+    if(sym != '?'){
+        fadeIn();
+    }
     onEnter(sym);
     drawTiles(); // draw after for when it changes something
 }
 
 void Area::leave(char sym){
     onLeave(sym);
+    if(sym != '?'){
+        fadeOut();
+    }
     
     for(Entity* e : entities){
         if(e != activePlayer){
@@ -97,6 +102,46 @@ bool Area::attackPlace(int x, int y, Entity* attacker, int damage, int type, boo
     }
     return hitSomething;
 }
+
+#define FADE_ANIMS 20
+
+void Area::fadeIn(){
+    float timer = 0;
+    for(int n=0;n<FADE_ANIMS;){
+        if(timer > 1.0f/ANIM_TICK_LENGTH){
+            for(int j=0;j<areaH;j++){
+                for(int i=0;i<areaW;i++){
+                    if(rand()%FADE_ANIMS < n){
+                        Tile tile = tileAt(i, j);
+                        putCharA(i, j, tile.color, tile.symbol);
+                    }
+                }
+            }
+            refresh();
+            n++;
+        }
+        timer += delta;
+    }
+}
+
+void Area::fadeOut(){
+    float timer = 0;
+    for(int n=0;n<FADE_ANIMS;){
+        if(timer > 1.0f/ANIM_TICK_LENGTH){
+            for(int j=0;j<areaH;j++){
+                for(int i=0;i<areaW;i++){
+                    if(rand()%FADE_ANIMS < n){
+                        putCharA(i, j, C_WHITE, ' ');
+                    }
+                }
+            }
+            refresh();
+            n++;
+        }
+        timer += delta;
+    }
+}
+
 
 
 

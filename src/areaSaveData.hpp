@@ -3,12 +3,19 @@
 #ifndef areaSaveData_hpp
 #define areaSaveData_hpp
 
-struct AreaDataCastleGFKitchen{
+struct AreaDataCastleF1Bedroom1{
     bool switchHit = false;
     bool doorClosed = true;
 };
-struct AreaDataCastleGFStorageRoom{
+struct AreaDataCastleF1KeyRoom{
     bool chestOpen = false;
+};
+struct AreaDataCastleGFKeyRoom{
+    bool chestOpen = false;
+};
+struct AreaDataCastleGFKitchen{
+    bool switchHit = false;
+    bool doorClosed = true;
 };
 struct AreaDataCastleGFThrone{
     bool leftDoorLocked = true;
@@ -17,8 +24,10 @@ struct AreaDataCastleGFThrone{
 
 
 struct AreaSaveData {
+    AreaDataCastleF1Bedroom1 areaDataCastleF1Bedroom1;
+    AreaDataCastleF1KeyRoom areaDataCastleF1KeyRoom;
+    AreaDataCastleGFKeyRoom areaDataCastleGFKeyRoom;
     AreaDataCastleGFKitchen areaDataCastleGFKitchen;
-    AreaDataCastleGFStorageRoom areaDataCastleGFStorageRoom;
     AreaDataCastleGFThrone areaDataCastleGFThrone;
 };
 

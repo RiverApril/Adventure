@@ -132,7 +132,7 @@ void refresh();
 
 // Functions called from main???.cpp
 bool init(); // Returns true if should start running
-bool update(float delta); // Returns true if still running
+bool update(); // Returns true if still running
 void cleanup();
 
 

@@ -43,12 +43,11 @@ public:
 
 class Living : public CanBeHit {
 public:
-    
-    Living(int hp) : hp(hp), CanBeHit(){maxHp=hp;}
+    Living(int hp) : CanBeHit(), hp(hp) {maxHp=hp;}
     virtual ~Living(){}
     
-    int maxHp;
     int hp;
+    int maxHp;
 };
 
 class Stunnable{

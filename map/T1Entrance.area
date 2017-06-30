@@ -18,7 +18,7 @@
 ####################################
 ####################################
 ####################################
-##################d#################
+##################c#################
 ##################.#################
 #########...................########
 #########...................########
@@ -28,7 +28,7 @@
 #########...................########
 #########...................########
 ##################.#################
-##################c#################
+##################d#################
 ####################################
 ####################################
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -47,13 +47,13 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-c:OutsideHome
+d:OutsideHome
 a:T1SlimeRoom
 b:T1NpcRoom
 */
 
 void onEnter(char sym){
-    if(sym == 'c'){
+    if(sym == 'd'){
         activeDialog = new Dialog({"The quick brown fox jumpped over the lazy dog. Uninterupted mongeese fail to see the beauty in rainforests.", "This is page two...", "Almost done, just making sure multiple pages work.", "One more", "Okay, last one."});
     }
 }

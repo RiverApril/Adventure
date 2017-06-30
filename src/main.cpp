@@ -206,8 +206,7 @@ void closeDialog(){
     }
 }
 
-bool update(float d){
-    delta = d;
+bool update(){
     secondsElapsed += delta;
 
     for(int i=0;i<14;i++){

@@ -1,14 +1,14 @@
 /* BEGIN AREA CastleF1HallB
+        |  |   \ ,   /   |  |       
         |  |   \     /   |  |       
+        |  |   \   ' /   |  |       
+        |  |   \ ,   /   |  |       
         |  |   \     /   |  |       
-        |  |   \     /   |  |       
-        |  |   \     /   |  |       
-        |  |   \     /   |  |       
-        |  |   \     /   |  |       
-        ||\|   \     /   |/||       
-        || |   \     /   | ||       
+        |  |   \  '  /   |  |       
+        ||\|   \   , /   |/||       
+        || |   \ ,   /   | ||       
         ||/|   \     /   |\||       
-        |  |   \     /   |  |       
+        |  |   \  '  /   |  |       
         |  |   '~~~~~'   |  |       
         |  |_____________|  |       
         |  /     / \     \  |       
@@ -48,4 +48,5 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 N:CastleF1HallT
+c:CastleF1Bedroom1
 */

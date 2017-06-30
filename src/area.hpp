@@ -84,6 +84,9 @@ struct Area{
             return Tile(' ', TILE_TYPE_AIR, C_WHITE);
         }
     }
+    
+    void fadeIn();
+    void fadeOut();
 };
 
 

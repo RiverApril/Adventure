@@ -41,6 +41,9 @@ bool keysLast[14] = {0};
 bool keysNow[14] = {0};
 
 
+unsigned int begin = SDL_GetTicks();
+unsigned int end;
+
 bool initSDL(){
 
     debug("Init SDL\n");
@@ -155,7 +158,10 @@ void refresh(){
     keysNow[K_DOWN] = keyboardState[SDL_SCANCODE_DOWN];
     keysNow[K_TOUCH] = keyboardState[SDL_SCANCODE_SPACE];
     keysNow[K_LID] = keyboardState[SDL_SCANCODE_ESCAPE];
-
+    
+    end = SDL_GetTicks();
+    delta = double(end - begin) / 1000.0;
+    begin = SDL_GetTicks();
 
 }
 
@@ -165,17 +171,10 @@ int main(){
         return 1;
     }
 
-    unsigned int begin = SDL_GetTicks();
-    unsigned int end;
-    double delta;
-
     running = init();
     
     while(running){
-        end = SDL_GetTicks();
-        delta = double(end - begin) / 1000.0;
-        begin = SDL_GetTicks();
-        if(!update(delta)){
+        if(!update()){
             running = false;
         }
     }

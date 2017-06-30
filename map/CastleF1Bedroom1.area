@@ -1,36 +1,37 @@
-/* BEGIN AREA CastleGFKitchen
-      _________________________     
-     |\                       /|    
-     | \        ,---,        / |    
-     |  \________\=/________/  |    
-     |  | ,____,     ,____, |  |    
-     |  | |_oOo|     |]]\_| |  |    
-     |  | |b_/_|     |_oOO| |  |    
-     |  |                   |  |    
-     |  | ,--,         ,O,  |  |    
-     |  | |==|         '"'  |  |    
-     |  |                   |  |    
-     |  |___________________|  |    
-     |  /        / \        \  |    
-     | /        '---'        \ |    
-     |/_______________________\|    
+/* BEGIN AREA CastleF1Bedroom1
+      ________________________      
+     |\   _____              /|     
+     | \  |___|             / |     
+     |  \_______,------,___/  |     
+     |  |     []|(_)(_)|[] |  |     
+     |  |     ''|~~~~~~|'' |  |     
+     ||\| ,--,  |~~~~~~|   |/||     
+     || | |  |  '======'   ||||     
+     ||/| |  |             |\||     
+     |  | |  |         ,o, |  |     
+     |  | '--'         '"' |  |     
+     |  |__________________|  |     
+     |  /                  \  |     
+     | /                    \ |     
+     |/______________________\|     
                                     
 ####################################
 ####################################
-##################b#################
-##################i#################
-#########...................########
-#########.######.....######.########
-#########.######.....######.########
-#########...................########
-#########.####..........j...########
-#########.####..............########
-#########...................########
-#########...................########
-##################.#################
-##################a#################
 ####################################
 ####################################
+#########.....############.#########
+#########.......########...#########
+#########.......########...#########
+######c.........########...i.b######
+#########..................#########
+#########...............j..#########
+#########..................#########
+#########..................#########
+####################################
+####################################
+####################################
+####################################
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
@@ -46,9 +47,8 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
-a:CastleGFDiningR
-b:CastleGFKeyRoom
+c:CastleF1HallB
+b:CastleF1KeyRoom
 */
 
 struct AreaData{
@@ -61,7 +61,7 @@ void onEnter(char sym){
     for(int i=0;i<activeArea->poiCount;i++){
         Poi poi = activeArea->pois[i];
         if(poi.sym == 'i'){
-            activeArea->entities.push_back(new Lock(poi.pos, false, thisAreaSaveData.doorClosed, LockDraw(color, '='), LockDraw(color, '_')));
+            activeArea->entities.push_back(new Lock(poi.pos, false, thisAreaSaveData.doorClosed, LockDraw(color, '|', '|'), LockDraw(color, '|', ' '), DIR_E));
         }else if(poi.sym == 'j'){
             activeArea->entities.push_back(new HitSwitch(poi.pos, thisAreaSaveData.switchHit, SWITCH_TYPE_TOGGLE, ColorSym(C_DARK_BLUE, 'o'), ColorSym(C_LIGHT_BLUE, 'O')));
         }

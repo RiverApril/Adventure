@@ -26,7 +26,9 @@ bool keysLast[14] = {0};
 bool keysNow[14] = {0};
 
 bool running = false;
- 
+
+u32 begin = cpuGetTiming();
+u32 end;
 
 u16 colorPal[32] = {
     (u16)RGB15(0, 0, 0),
@@ -114,6 +116,17 @@ void refresh(){
     dmaCopy(screenBitmapMain, bgGetGfxPtr(bgMain), 256*consoleH*fontH);
     dmaCopy(screenBitmapSub, bgGetGfxPtr(bgSub), 256*consoleH*fontH);
     swiWaitForVBlank();
+    
+    end = cpuGetTiming();
+    delta = float(end-begin) / BUS_CLOCK;
+    begin = end;
+    
+    scanKeys();
+    int keys = keysHeld();
+    for(int i=0;i<14;i++){
+        keysLast[i] = keysNow[i];
+        keysNow[i] = keys & (1 << i);
+    }
 }
 
 void debug(const char* fmt, ...){
@@ -150,26 +163,12 @@ int main(void) {
 
     cpuStartTiming(0);
 
-    u32 begin = cpuGetTiming();
-    u32 end;
-
     float delta;
 
     running = init();
 
     while(running){
-        end = cpuGetTiming();
-        delta = float(end-begin) / BUS_CLOCK;
-        begin = end;
-
-        scanKeys();
-        int keys = keysHeld();
-        for(int i=0;i<14;i++){
-            keysLast[i] = keysNow[i];
-            keysNow[i] = keys & (1 << i);
-        }
-
-        running = update(delta);
+        running = update();
     }
 
     cleanup();

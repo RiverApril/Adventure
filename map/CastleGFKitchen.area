@@ -24,7 +24,7 @@
 #########.######.....######.########
 #########...................########
 #########.####..........j...########
-#########.####..............########
+#########.####....s.........########
 #########...................########
 #########...................########
 ##################.#################
@@ -64,6 +64,8 @@ void onEnter(char sym){
             activeArea->entities.push_back(new Lock(poi.pos, false, thisAreaSaveData.doorClosed, LockDraw(color, '='), LockDraw(color, '_')));
         }else if(poi.sym == 'j'){
             activeArea->entities.push_back(new HitSwitch(poi.pos, thisAreaSaveData.switchHit, SWITCH_TYPE_TOGGLE, ColorSym(C_DARK_BLUE, 'o'), ColorSym(C_LIGHT_BLUE, 'O')));
+        }else if(poi.sym == 's'){
+            activeArea->entities.push_back(new Slime(AREA_X(poi.pos), AREA_Y(poi.pos)));
         }
     }
 }

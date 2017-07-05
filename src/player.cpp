@@ -19,7 +19,8 @@ bool isTargetForPlayer(Entity* e){
 bool isSolidForPlayer(Entity* e){
     CanBeHit* c = dynamic_cast<CanBeHit*>(e);
     Lock* l = dynamic_cast<Lock*>(e);
-    return (c && c->shouldBeSolid()) || dynamic_cast<Npc*>(e) || dynamic_cast<Chest*>(e) || (l && l->locked);
+    Living* v = dynamic_cast<Living*>(e);
+    return (c && !v) || dynamic_cast<Npc*>(e) || dynamic_cast<Chest*>(e) || (l && l->locked);
 }
 
 void Player::update(){

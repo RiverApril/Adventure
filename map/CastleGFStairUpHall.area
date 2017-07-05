@@ -22,7 +22,7 @@
 ############.............###########
 ############.............###########
 ############.............###########
-############.............###########
+############......s......###########
 ############.............###########
 ############.............###########
 ############.............###########
@@ -50,3 +50,12 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 a:CastleF1HallT
 b:CastleGFThrone
 */
+
+void onEnter(){
+    for(int i=0;i<activeArea->poiCount;i++){
+        Poi poi = activeArea->pois[i];
+        if(poi.sym == 's'){
+            activeArea->entities.push_back(new Slime(AREA_X(poi.pos), AREA_Y(poi.pos)));
+        }
+    }
+}

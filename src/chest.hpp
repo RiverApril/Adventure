@@ -35,12 +35,7 @@ public:
         putCharA(R(x), R(y), drawState.color, drawState.sym);
     }
     
-    void open(){
-        if(!opened){
-            opened = true;
-            treasure.activate();
-        }
-    }
+    void open();
     
 };
 

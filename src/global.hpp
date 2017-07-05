@@ -96,9 +96,9 @@ struct SaveData{
     int spawnHp;
     unsigned char playerX;
     unsigned char playerY;
+    int areaIndex;
     unsigned char playerSpawnX;
     unsigned char playerSpawnY;
-    int areaIndex;
     int spawnAreaIndex;
     bool useUnlocked[USE_COUNT];
     int useSelected;
@@ -151,7 +151,7 @@ unsigned char useChar(int use = activeSave->useSelected);
 const char* useName(int use = activeSave->useSelected);
 const char* usePickupName(int use = activeSave->useSelected);
 void closeDialog();
-
+void setSpawnPoint(unsigned char x = activeSave->playerX, unsigned char y = activeSave->playerY, int i = activeSave->areaIndex);
 
 
 //

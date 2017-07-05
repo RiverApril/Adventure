@@ -20,6 +20,19 @@ void Treasure::activate(){
             activeSave->useUnlocked[meta] = true;
             text = ("A "+string(usePickupName())+".").c_str();
             break;
+            
+        case TREASURE_NONE:
+            text = "... Nothing";
+            break;
     }
     activeDialog = new Dialog({"Inside the chest you find...", text});
+}
+
+void Chest::open(){
+    if(!opened){
+        opened = true;
+        treasure.activate();
+    }else{
+        activeDialog = new Dialog({"This chest has already been opened."});
+    }
 }

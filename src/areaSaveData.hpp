@@ -10,6 +10,9 @@ struct AreaDataCastleF1Bedroom1{
 struct AreaDataCastleF1KeyRoom{
     bool chestOpen = false;
 };
+struct AreaDataCastleF1SwordRoom{
+    bool chestOpen = false;
+};
 struct AreaDataCastleGFKeyRoom{
     bool chestOpen = false;
 };
@@ -26,6 +29,7 @@ struct AreaDataCastleGFThrone{
 struct AreaSaveData {
     AreaDataCastleF1Bedroom1 areaDataCastleF1Bedroom1;
     AreaDataCastleF1KeyRoom areaDataCastleF1KeyRoom;
+    AreaDataCastleF1SwordRoom areaDataCastleF1SwordRoom;
     AreaDataCastleGFKeyRoom areaDataCastleGFKeyRoom;
     AreaDataCastleGFKitchen areaDataCastleGFKitchen;
     AreaDataCastleGFThrone areaDataCastleGFThrone;

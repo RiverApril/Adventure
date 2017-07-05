@@ -134,9 +134,9 @@ void startGame(int i){
         activeSave->spawnHp = 6;
         activeSave->playerX = 21; // only set these when entering a room
         activeSave->playerY = 6; // ''
+        activeSave->areaIndex = areaInsideHome->index;
         activeSave->playerSpawnX = 21;
         activeSave->playerSpawnY = 6;
-        activeSave->areaIndex = areaInsideHome->index;
         activeSave->spawnAreaIndex = areaInsideHome->index;
         for(int i=0;i<USE_COUNT;i++){
             activeSave->useUnlocked[i] = false;//rand()%2;
@@ -158,6 +158,12 @@ void startGame(int i){
     
     activeArea->enter('?');
     saveGame();
+}
+
+void setSpawnPoint(unsigned char x, unsigned char y, int i){
+    activeSave->playerSpawnX = x;
+    activeSave->playerSpawnY = y;
+    activeSave->spawnAreaIndex = i;
 }
 
 #define MENU_MAIN_MENU 0

@@ -163,8 +163,6 @@ int main(void) {
 
     cpuStartTiming(0);
 
-    float delta;
-
     running = init();
 
     while(running){

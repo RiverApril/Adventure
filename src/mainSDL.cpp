@@ -1,7 +1,7 @@
 #ifdef FROM_MAIN_CPP
 
 #include <SDL2/SDL.h>
-#include <SDL2_image/SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <ctime>
 
 #include "global.hpp"

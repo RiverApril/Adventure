@@ -141,9 +141,9 @@ void startGame(int i){
         for(int i=0;i<USE_COUNT;i++){
             activeSave->useUnlocked[i] = false;//rand()%2;
         }
-        //activeSave->useUnlocked[USE_BOW] = true;
-        //activeSave->useUnlocked[USE_BOOMERANG] = true;
-        //activeSave->useUnlocked[USE_BOMB] = true;
+        activeSave->useUnlocked[USE_BOW] = true;
+        activeSave->useUnlocked[USE_BOOMERANG] = true;
+        activeSave->useUnlocked[USE_BOMB] = true;
         activeSave->useSelected = USE_NONE;
         activeSave->sword = SWORD_STICK;
         activeSave->keyCount = 0;

@@ -11,6 +11,12 @@ Adventure.sav
 *.xcodeproj/
 preActionLog\.txt
 
+# Visual Studio code:
+.vscode/
+
+# Mac:
+.DS_Store
+
 # CMake:
 cmake/
 CMakeFiles/

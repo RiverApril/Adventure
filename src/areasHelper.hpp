@@ -1,4 +1,4 @@
-#include "areas.hpp"
+#include "gen/areas.hpp"
 #include "slime.hpp"
 #include "player.hpp"
 #include "npc.hpp"

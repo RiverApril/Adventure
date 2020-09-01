@@ -52,6 +52,8 @@ a:T1SlimeRoom
 b:T1NpcRoom
 */
 
+#include "../src/areasHelper.hpp"
+
 void onEnter(char sym){
     if(sym == 'd'){
         activeDialog = new Dialog({"The quick brown fox jumpped over the lazy dog. Uninterupted mongeese fail to see the beauty in rainforests.", "This is page two...", "Almost done, just making sure multiple pages work.", "One more", "Okay, last one."});

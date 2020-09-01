@@ -3,7 +3,7 @@
 #ifndef global_hpp
 #define global_hpp
 
-#include "areaSaveData.hpp"
+#include "gen/areaSaveData.hpp"
 
 #include <cmath>
 #include <vector>

@@ -18,15 +18,13 @@ preActionLog\.txt
 .DS_Store
 
 # CMake:
-cmake/
 CMakeFiles/
 Makefile
 cmake_install.cmake
 CMakeCache.txt
 
 # Auto generated
-src/areas.hpp
-src/areas.cpp
+src/gen/
 
 # NDS Makefile is static
 !nds/Makefile

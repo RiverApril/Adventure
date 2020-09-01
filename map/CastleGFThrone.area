@@ -52,10 +52,12 @@ c:CastleGFDiningL
 S:CastleGFEntrance
 */
 
+#include "../src/areasHelper.hpp"
+
 struct AreaData{
     bool leftDoorLocked = true;
     bool topDoorLocked = true;
-};
+} thisAreaSaveData;
 
 void onEnter(char sym){
     unsigned char color = C_LIGHT_MAGENTA;

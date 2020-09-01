@@ -21,10 +21,9 @@
 #else
 #include "mainSDL.cpp"
 
-
 #define STR_K_A "A"
 #define STR_K_B "S"
-#define STR_K_SELECT "TABULR"
+#define STR_K_SELECT "TAB"
 #define STR_K_START "ENTER"
 #define STR_K_RIGHT "RIGHT"
 #define STR_K_LEFT "LEFT"
@@ -39,7 +38,7 @@
 
 #endif
 
-#include "areas.hpp"
+#include "gen/areas.hpp"
 #include "player.hpp"
 #include "dialog.hpp"
 
@@ -145,7 +144,7 @@ void startGame(int i){
         activeSave->useUnlocked[USE_BOOMERANG] = true;
         activeSave->useUnlocked[USE_BOMB] = true;
         activeSave->useSelected = USE_NONE;
-        activeSave->sword = SWORD_STICK;
+        activeSave->sword = SWORD_BASIC;
         activeSave->keyCount = 0;
         activeSave->arrowCount = 20;
         activeSave->bombCount = 20;
@@ -342,6 +341,11 @@ bool update(){
                             }while(!activeSave->useUnlocked[activeSave->useSelected]);
                         }
                     }
+                    drawBox(consoleW-18, invY+consoleHH+6, 17, 3);
+                    if(activeSave->sword != SWORD_NONE){
+                        putChar(consoleW-16, invY+consoleHH+7, swordColor(), swordChar());
+                        putStr(consoleW-14, invY+consoleHH+7, C_WHITE, swordName());
+                    }
                     break;
                 }
                 case MENU_PAUSE:{
@@ -457,7 +461,7 @@ float randf(){
 }
 unsigned char swordColor(){
     switch (activeSave->sword) {
-        case SWORD_NONE: return C_WHITE;
+        case SWORD_NONE:  return C_WHITE;
         case SWORD_BASIC: return C_LIGHT_GREY;
         case SWORD_STICK: return C_DARK_YELLOW;
         default: return C_WHITE;
@@ -465,7 +469,7 @@ unsigned char swordColor(){
 }
 unsigned char swordChar(){
     switch (activeSave->sword) {
-        case SWORD_NONE: return ' ';
+        case SWORD_NONE:  return ' ';
         case SWORD_BASIC: return '/';
         case SWORD_STICK: return '/';
         default: return '?';
@@ -473,7 +477,7 @@ unsigned char swordChar(){
 }
 int swordDamage(){
     switch (activeSave->sword) {
-        case SWORD_NONE: return 0;
+        case SWORD_NONE:  return 0;
         case SWORD_BASIC: return 1;
         case SWORD_STICK: return 1;
         default: return 0;
@@ -481,7 +485,7 @@ int swordDamage(){
 }
 const char* swordName(){
     switch (activeSave->sword) {
-        case SWORD_NONE: return "Nothing";
+        case SWORD_NONE:  return "Nothing";
         case SWORD_STICK: return "Stick";
         case SWORD_BASIC: return "Basic Sword";
         default: return "???";
@@ -489,37 +493,37 @@ const char* swordName(){
 }
 unsigned char useColor(int use){
     switch (use) {
-        case USE_NONE: return C_WHITE;
-        case USE_BOW: return C_LIGHT_YELLOW;
+        case USE_NONE:      return C_WHITE;
+        case USE_BOW:       return C_LIGHT_YELLOW;
         case USE_BOOMERANG: return C_LIGHT_GREEN;
-        case USE_BOMB: return C_LIGHT_RED;
-        default: return C_WHITE;
+        case USE_BOMB:      return C_LIGHT_RED;
+        default:            return C_WHITE;
     }
 }
 unsigned char useChar(int use){
     switch (use) {
-        case USE_NONE: return ' ';
-        case USE_BOW: return ')';
+        case USE_NONE:      return ' ';
+        case USE_BOW:       return ')';
         case USE_BOOMERANG: return 'L';
-        case USE_BOMB: return 'o';
+        case USE_BOMB:      return 'o';
         default: return '?';
     }
 }
 const char* useName(int use){
     switch (use) {
-        case USE_NONE: return "";
-        case USE_BOW: return "Bow";
+        case USE_NONE:      return "";
+        case USE_BOW:       return "Bow";
         case USE_BOOMERANG: return "Boomerang";
-        case USE_BOMB: return "Bomb";
+        case USE_BOMB:      return "Bomb";
         default: return "???";
     }
 }
 const char* usePickupName(int use){
     switch (use) {
-        case USE_NONE: return "";
-        case USE_BOW: return "Bow and quiver";
+        case USE_NONE:      return "";
+        case USE_BOW:       return "Bow and quiver";
         case USE_BOOMERANG: return "Boomerang";
-        case USE_BOMB: return "Bomb bag";
+        case USE_BOMB:      return "Bomb bag";
         default: return "???";
     }
 }

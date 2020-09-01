@@ -51,6 +51,8 @@ c:OutsideHome
 N:CastleGFThrone
 */
 
+#include "../src/areasHelper.hpp"
+
 void onEnter(char sym){
     if(sym == 'c'){
         setSpawnPoint();

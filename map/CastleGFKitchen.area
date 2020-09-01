@@ -51,10 +51,12 @@ a:CastleGFDiningR
 b:CastleGFKeyRoom
 */
 
+#include "../src/areasHelper.hpp"
+
 struct AreaData{
     bool switchHit = false;
     bool doorClosed = true;
-};
+} thisAreaSaveData;
 
 void onEnter(char sym){
     unsigned char color = C_LIGHT_MAGENTA;

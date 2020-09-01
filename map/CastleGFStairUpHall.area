@@ -51,6 +51,8 @@ a:CastleF1HallT
 b:CastleGFThrone
 */
 
+#include "../src/areasHelper.hpp"
+
 void onEnter(){
     for(int i=0;i<activeArea->poiCount;i++){
         Poi poi = activeArea->pois[i];

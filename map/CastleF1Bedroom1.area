@@ -51,10 +51,12 @@ c:CastleF1HallB
 b:CastleF1KeyRoom
 */
 
-struct AreaData{
+#include "../src/areasHelper.hpp"
+
+struct AreaData {
     bool switchHit = false;
     bool doorClosed = true;
-};
+} thisAreaSaveData;
 
 void onEnter(char sym){
     unsigned char color = C_LIGHT_MAGENTA;

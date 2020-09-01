@@ -50,9 +50,11 @@ mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 b:CastleF1Miniboss
 */
 
+#include "../src/areasHelper.hpp"
+
 struct AreaData{
     bool chestOpen = false;
-};
+} thisAreaSaveData;
 
 void onEnter(char sym){
     unsigned char color = C_LIGHT_MAGENTA;

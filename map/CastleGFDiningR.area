@@ -51,6 +51,8 @@ a:CastleGFKitchen
 W:CastleGFDiningL
 */
 
+#include "../src/areasHelper.hpp"
+
 void onEnter(){
     for(int i=0;i<activeArea->poiCount;i++){
         Poi poi = activeArea->pois[i];

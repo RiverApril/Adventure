@@ -7,14 +7,14 @@ project(Adventure)
 
 set(CMAKE_CXX_STANDARD 14)
 
-FILE(GLOB SOURCE_FILES src/*.cpp)
+FILE(GLOB SOURCE_FILES src/*.cpp src/gen/*.cpp)
 
 FILE(GLOB AREA_FILES map/*.area)
 
 add_executable( Adventure ${SOURCE_FILES} )
 
 add_custom_command(
-    OUTPUT src/areas.hpp src/areas.cpp
+    OUTPUT src/gen/areas.hpp src/gen/areas.cpp src/gen/areaSaveData.hpp
     COMMAND ./genAreas.py
     DEPENDS ${AREA_FILES} genAreas.py
 )

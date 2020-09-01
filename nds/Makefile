@@ -18,7 +18,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	Adventure
 BUILD		:=	build
-SOURCES		:=	../src
+SOURCES		:=	../src ../src/gen
 DATA		:=  
 INCLUDES	:=	include
 GRAPHICS	:=	../gfx

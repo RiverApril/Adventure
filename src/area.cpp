@@ -77,7 +77,7 @@ void Area::leave(char sym){
 
 
 bool Area::isPlaceSolid(int x, int y, Entity* from, bool(*isEntitySolid)(Entity*)){
-    if(tileAt(x, y).isSolid()){
+    if(tileAt(x, y, from).isSolid()){
         return true;
     }else{
         for(Entity* e : entities){

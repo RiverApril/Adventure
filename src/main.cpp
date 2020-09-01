@@ -150,6 +150,8 @@ void startGame(int i){
         activeSave->bombCount = 20;
         activeSave->areaData = AreaSaveData();
     }
+
+    activeDialog = nullptr;
     
     activeArea = allAreas[activeSave->areaIndex];
     

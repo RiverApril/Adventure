@@ -2,6 +2,7 @@
 #define area_hpp
 
 #include "global.hpp"
+#include "player.hpp"
 
 #define TILE_TYPE_AIR 0
 #define TILE_TYPE_SOLID 1
@@ -77,11 +78,13 @@ struct Area{
     bool isPlaceSolid(int x, int y, Entity* from, bool(*isEntitySolid)(Entity*));
     bool attackPlace(int x, int y, Entity* attacker, int damage, int type, bool(*isEntityTarget)(Entity*));
     
-    Tile tileAt(int x, int y) {
+    Tile tileAt(int x, int y, Entity* from = nullptr) {
         if(x >= 0 && x < areaW && y >= 0 && y < areaH){
             return (tiles[y*areaW+x]);
-        }else{
+        }else if(dynamic_cast<Player*>(from)){
             return Tile(' ', TILE_TYPE_AIR, C_WHITE);
+        }else{
+            return Tile(' ', TILE_TYPE_SOLID, C_WHITE);
         }
     }
     

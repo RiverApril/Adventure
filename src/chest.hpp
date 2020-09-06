@@ -8,7 +8,7 @@
 #define TREASURE_SWORD 2
 #define TREASURE_USE 3
 
-struct Treasure{
+struct Treasure {
     Treasure(unsigned char type, int meta = 1) : type(type), meta(meta){}
     unsigned char type;
     int meta = 1;

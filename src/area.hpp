@@ -49,6 +49,10 @@ struct Poi{
     int pos;
 };
 
+#define FADE_INSTANT 0
+#define FADE_DISSOLVE 1
+#define FADE_ZOOM 2
+
 struct Area{
 
     int index;
@@ -88,8 +92,7 @@ struct Area{
         }
     }
     
-    void fadeIn();
-    void fadeOut();
+    void fade(int style, bool in);
 };
 
 

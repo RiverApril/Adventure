@@ -68,6 +68,8 @@ bool initSDL(){
         return 1;
     }
 
+    SDL_GL_SetSwapInterval(1);
+    
     keyboardState = SDL_GetKeyboardState(NULL);
 
     fontTexture = IMG_LoadTexture(mainRenderer, "gfx/font.png");

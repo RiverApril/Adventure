@@ -53,19 +53,21 @@ void Player::update(){
         tryToMove = true;
     }
 
-    if(keysNow[K_L]){ // cheat code
-        x += dx;
-        y += dy;
-    }else{
-        if(!activeArea->isPlaceSolid(R(x+dx), R(y), this, isSolidForPlayer)){
-            x += dx;
-        }
-        if(!activeArea->isPlaceSolid(R(x), R(y+dy), this, isSolidForPlayer)) {
-            y += dy;
-        }
-    }
+    if (tryToMove && swingTimer <= 0) { // Don't move while swinging to make aiming easier
 
-    if(!tryToMove){
+        if(keysNow[K_L]){ // cheat code
+            x += dx;
+            y += dy;
+        }else{
+            if(!activeArea->isPlaceSolid(R(x+dx), R(y), this, isSolidForPlayer)){
+                x += dx;
+            }
+            if(!activeArea->isPlaceSolid(R(x), R(y+dy), this, isSolidForPlayer)) {
+                y += dy;
+            }
+        }
+
+    } else {
         x = R(x);
         y = R(y);
     }

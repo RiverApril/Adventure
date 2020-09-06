@@ -55,6 +55,8 @@
 #define AREA_X(p) ((p) % areaW)
 #define AREA_Y(p) ((p) / areaW)
 
+#define SQUARE(x) ((x)*(x))
+
 #define K_A 0
 #define K_B 1
 #define K_SELECT 2

@@ -577,12 +577,14 @@ void fadeZoom(Area* area, int playerX, int playerY, bool in) {
 
     while (timer >= 0) {
 
+        timer -= delta;
+
         float timerProgress = 1.0f - (timer / MAX_FADE_TIMER);
 
         for (int j = 0; j < areaH; j++) {
             for (int i = 0; i < areaW; i++) {
 
-                bool shouldDraw = true;
+                bool shouldDraw;
 
                 float dist2 = SQUARE(playerX - i) + SQUARE(playerY - j);
                 if (in) {
@@ -591,7 +593,7 @@ void fadeZoom(Area* area, int playerX, int playerY, bool in) {
                     shouldDraw = dist2 >= SQUARE(20 * (1.0f-timerProgress));
                 }
 
-                if (shouldDraw) {
+                if (shouldDraw || timer <= 0) {
                     if (in) {
                         Tile tile = area->tileAt(i, j);
                         putCharA(i, j, tile.color, tile.symbol);
@@ -603,7 +605,6 @@ void fadeZoom(Area* area, int playerX, int playerY, bool in) {
         }
 
         refresh();
-        timer -= delta;
     }
 }
 
@@ -663,7 +664,6 @@ void fadeAreas(Area* from, int fromX, int fromY, Area* to, int toX, int toY, int
         }
         case FADE_ZOOM: {
             fadeZoom(from, fromX, fromY, false);
-            putCharA(fromX, fromY, C_WHITE, ' ');
             fadeZoom(to, toX, toY, true);
             break;
         }

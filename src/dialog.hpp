@@ -21,7 +21,7 @@ public:
     bool shouldBeDeleted = true;
     unsigned char style;
     vector<string> pages;
-    int page = 0;
+    size_t page = 0;
     float scroll = 0;
     bool waiting = false;
     

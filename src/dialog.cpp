@@ -18,7 +18,7 @@ void Dialog::update(){
         diaY++;
     }
     
-    int charI = 0;
+    size_t charI = 0;
     int lastSpace = 0;
     int extra = 0;
     

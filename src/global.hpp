@@ -50,6 +50,8 @@
 
 #define DIR_X(d) ((d)==DIR_E?1:((d)==DIR_W?-1:0))
 #define DIR_Y(d) ((d)==DIR_S?1:((d)==DIR_N?-1:0))
+#define DIR_X_COMP(d, l, r) ((d)==DIR_E?((l)<(r)):((d)==DIR_W?((l)>(r)):false))
+#define DIR_Y_COMP(d, l, r) ((d)==DIR_S?((l)<(r)):((d)==DIR_N?((l)>(r)):false))
 
 #define AREA_POS(x, y) ((y)*areaW+(x))
 #define AREA_X(p) ((p) % areaW)

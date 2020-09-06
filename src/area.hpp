@@ -49,9 +49,13 @@ struct Poi{
     int pos;
 };
 
-#define FADE_INSTANT 0
+#define FADE_NONE 0
 #define FADE_DISSOLVE 1
 #define FADE_ZOOM 2
+#define FADE_WIPE_S 3
+#define FADE_WIPE_N 4
+#define FADE_WIPE_E 5
+#define FADE_WIPE_W 6
 
 struct Area{
 
@@ -91,8 +95,6 @@ struct Area{
             return Tile(' ', TILE_TYPE_SOLID, C_WHITE);
         }
     }
-    
-    void fade(int style, bool in);
 };
 
 

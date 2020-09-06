@@ -54,18 +54,12 @@ void Area::enter(char sym){
     activeSave->areaIndex = index;
     boomerangOut = false;
     entities.push_back(activePlayer);
-    if(sym != '?'){
-        fade(FADE_ZOOM, true);
-    }
     onEnter(sym);
     drawTiles(); // draw after for when it changes something
 }
 
 void Area::leave(char sym){
     onLeave(sym);
-    if(sym != '?'){
-        fade(FADE_ZOOM, false);
-    }
     
     for(Entity* e : entities){
         if(e != activePlayer){
@@ -102,69 +96,4 @@ bool Area::attackPlace(int x, int y, Entity* attacker, int damage, int type, boo
     }
     return hitSomething;
 }
-
-#define MAX_FADE_TIMER 0.5f
-#define TIMER_DIV_COUNT 20
-
-void Area::fade(int style, bool in) {
-    if(style == FADE_INSTANT){
-        return;
-    }
-
-    float timer = MAX_FADE_TIMER;
-
-    float timer_div = 0;
-
-    bool divN = false;
-
-    while(timer > 0){
-
-        float timerProgress = 1.0f - (timer / MAX_FADE_TIMER);
-
-        divN = false;
-        if(timer_div >= MAX_FADE_TIMER / TIMER_DIV_COUNT){
-            timer_div -= MAX_FADE_TIMER / TIMER_DIV_COUNT;
-            divN = true;
-        }
-
-        for(int j=0;j<areaH;j++){
-            for(int i=0;i<areaW;i++){
-
-                bool shouldDraw = true;
-
-                switch(style){
-                    case FADE_DISSOLVE: {
-                        shouldDraw = divN && (randf() < timerProgress);
-                        break;
-                    }
-                    case FADE_ZOOM: {
-                        float dist2 = SQUARE(activePlayer->x - i) + SQUARE(activePlayer->y - j);
-                        if(in){
-                            shouldDraw = dist2 <= SQUARE(20 * timerProgress);
-                        }else{
-                            shouldDraw = dist2 >= SQUARE(20 * (1.0f-timerProgress));
-                        }
-                        break;
-                    }
-                }
-
-                if(shouldDraw){
-                    if(in){
-                        Tile tile = tileAt(i, j);
-                        putCharA(i, j, tile.color, tile.symbol);
-                    }else{
-                        putCharA(i, j, C_WHITE, ' ');
-                    }
-                }
-            }
-        }
-
-        refresh();
-        timer -= delta;
-        timer_div += delta;
-    }
-}
-
-
-
 
